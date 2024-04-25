@@ -1,13 +1,17 @@
-import React from "react";
+import "@refinedev/antd/dist/reset.css";
+
+// import React from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "./App";
 
-const container = document.getElementById("root") as HTMLElement;
-const root = createRoot(container);
-
-root.render(
-  <React.StrictMode>
+createRoot(document.getElementById("root") as HTMLElement)
+  .render(
     <App />
-  </React.StrictMode>
-);
+  );
+
+/*
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+*/

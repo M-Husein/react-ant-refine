@@ -1,8 +1,8 @@
-import { AuthBindings } from "@refinedev/core";
+import { AuthProvider } from "@refinedev/core"; // AuthBindings
 
-export const TOKEN_KEY = "refine-auth";
+export const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
-export const authProvider: AuthBindings = {
+export const authProvider: AuthProvider = { // : AuthBindings
   login: async ({ username, email, password }) => {
     if ((username || email) && password) {
       localStorage.setItem(TOKEN_KEY, username);
@@ -47,7 +47,7 @@ export const authProvider: AuthBindings = {
       return {
         id: 1,
         name: "John Doe",
-        avatar: "https://i.pravatar.cc/300",
+        avatar: "/media/img/hijab_girl.jpg", // "https://i.pravatar.cc/300",
       };
     }
     return null;

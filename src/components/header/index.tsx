@@ -48,12 +48,19 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = ({
         <Switch
           checkedChildren="🌛"
           unCheckedChildren="🔆"
-          onChange={() => setMode(mode === "light" ? "dark" : "light")}
+          onChange={() => setMode(mode === "dark" ? "light" : "dark")}
           defaultChecked={mode === "dark"}
         />
         <Space style={{ marginLeft: "8px" }} size="middle">
           {user?.name && <Text strong>{user.name}</Text>}
-          {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />}
+
+          {/* {user?.avatar && <Avatar src={user?.avatar} alt={user?.name} />} */}
+          <Avatar 
+            alt={user?.name}
+            src={user?.avatar}
+          >
+            {user?.name?.[0] || "?"}
+          </Avatar>
         </Space>
       </Space>
     </AntdLayout.Header>
