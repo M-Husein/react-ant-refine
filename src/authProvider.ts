@@ -1,8 +1,11 @@
-import { AuthProvider } from "@refinedev/core"; // AuthBindings
+import { AuthProvider } from "@refinedev/core";
 
-export const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
+const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
-export const authProvider: AuthProvider = { // : AuthBindings
+export const authProvider: AuthProvider = {
+  // register: async ({ redirectPath, ...data }) => {
+
+  // },
   login: async ({ username, email, password }) => {
     if ((username || email) && password) {
       localStorage.setItem(TOKEN_KEY, username);
@@ -22,6 +25,12 @@ export const authProvider: AuthProvider = { // : AuthBindings
   },
   logout: async () => {
     localStorage.removeItem(TOKEN_KEY);
+
+    const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
+    bc.postMessage({ type: "LOGOUT" });
+
+    // window.location.replace('/login/');
+
     return {
       success: true,
       redirectTo: "/login",
@@ -46,12 +55,22 @@ export const authProvider: AuthProvider = { // : AuthBindings
     if (token) {
       return {
         id: 1,
-        name: "John Doe",
+        name: "Fairuz",
+        username: 'fairuz',
         avatar: "/media/img/hijab_girl.jpg", // "https://i.pravatar.cc/300",
       };
     }
     return null;
   },
+  // forgotPassword: async ({ username }) => { // email
+  //   const errorResponse = {
+  //     success: false,
+  //     error: {
+  //       name: "ForgotPasswordError",
+  //       message: "Username does not exist",
+  //     },
+  //   };
+  // },
   onError: async (error) => {
     console.error(error);
     return { error };

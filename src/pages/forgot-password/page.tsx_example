@@ -1,5 +1,6 @@
 import { AuthPage } from "@refinedev/antd";
 
-export const ForgotPassword = () => {
+// ForgotPassword
+export default function(){
   return <AuthPage type="forgotPassword" />;
 };

@@ -1,0 +1,351 @@
+// From Bootstrap 4
+
+// For Table devexpress
+
+.card-header,
+.card-footer {
+  padding: .75rem 1.25rem;
+  background-color: rgba(0,0,0,.03);
+  // border: 0 solid rgba(0,0,0,.125);
+}
+
+// .card-header {
+//   // padding: .75rem 1.25rem;
+//   margin-bottom: 0;
+//   // background-color: rgba(0,0,0,.03);
+//   // border-bottom: 1px solid rgba(0,0,0,.125);
+// }
+
+.card-footer {
+  // padding: .75rem 1.25rem;
+  // background-color: rgba(0,0,0,.03);
+  border-top: 1px solid rgba(0,0,0,.125);
+}
+
+// Using in Table component (grouping)
+
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+
+.btn:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
+
+.tb-dropGroup .btn, // For table devexpress
+.btn-sm,
+.btn-group-sm > .btn {
+  padding: .25rem .5rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  background-color: transparent;
+  background-image: none;
+  border-color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-group {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle
+}
+
+.btn-group > .btn {
+  position: relative;
+  flex: 0 1 auto
+}
+
+.btn-group > .btn:hover {
+  z-index: 1
+}
+
+.btn-group > .btn.active,
+.btn-group > .btn:active,
+.btn-group > .btn:focus {
+  z-index: 1
+}
+
+.btn-group .btn + .btn,
+.btn-group .btn + .btn-group,
+.btn-group .btn-group + .btn,
+.btn-group .btn-group + .btn-group {
+  margin-left: -1px
+}
+
+.btn-group > .btn:first-child {
+  margin-left: 0
+}
+
+.btn-group > .btn:not(:last-child):not(.dropdown-toggle),
+.btn-group > .btn-group:not(:last-child) > .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0
+}
+
+.btn-group > .btn-group:not(:first-child) > .btn, 
+.btn-group > .btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0
+}
+
+// DEV_OPTION : Using in devexpress table drag & drop column
+
+// .list-group {
+//   display: flex;
+//   flex-direction: column;
+//   padding-left: 0;
+//   margin-bottom: 0;
+//   border-radius: .25rem
+// }
+
+// .list-group-item-action {
+//   width: 100%;
+//   color: #495057;
+//   text-align: inherit
+// }
+
+// .list-group-item-action:focus,
+// .list-group-item-action:hover {
+//   z-index: 1;
+//   color: #495057;
+//   text-decoration: none;
+//   background-color: #f8f9fa
+// }
+
+// .list-group-item-action:active {
+//   color: #212529;
+//   background-color: #e9ecef
+// }
+
+// .list-group-item {
+//   position: relative;
+//   display: block;
+//   padding: .75rem 1.25rem;
+//   background-color: #fff;
+//   border: 1px solid rgba(0,0,0,.125)
+// }
+
+// .list-group-item:first-child {
+//   border-top-left-radius: inherit;
+//   border-top-right-radius: inherit
+// }
+
+// .list-group-item:last-child {
+//   border-bottom-right-radius: inherit;
+//   border-bottom-left-radius: inherit
+// }
+
+// .list-group-item.disabled,
+// .list-group-item:disabled {
+//   color: #6c757d;
+//   pointer-events: none;
+//   background-color: #fff
+// }
+
+// .list-group-item.active {
+//   z-index: 2;
+//   color: #fff;
+//   background-color: #007bff;
+//   border-color: #007bff
+// }
+
+// .list-group-item + .list-group-item {
+//   border-top-width: 0
+// }
+
+// .list-group-item + .list-group-item.active {
+//   margin-top: -1px;
+//   border-top-width: 1px
+// }
+
+// input[type=checkbox] {
+//   --bs-form-check-bg: var(--q-bg-main); // --bs-body-bg
+//   width: 1em;
+//   height: 1em;
+//   margin-top: .25em;
+//   vertical-align: top;
+//   appearance: none;
+//   background-color: var(--bs-form-check-bg);
+//   background-image: var(--bs-form-check-bg-image);
+//   background-repeat: no-repeat;
+//   background-position: center;
+//   background-size: contain;
+//   border: 1px solid #dee2e6; // #e5e7eb
+//   -webkit-print-color-adjust: exact;
+//   color-adjust: exact;
+//   print-color-adjust: exact;
+// }
+
+// input[type=checkbox] {
+//   border-radius: .25em
+// }
+
+// input[type=radio] {
+//   border-radius: 50%
+// }
+
+// input[type=checkbox]:active {
+//   filter: brightness(90%)
+// }
+
+// input[type=checkbox]:focus {
+//   border-color: #86b7fe;
+//   outline: 0;
+//   box-shadow: 0 0 0 .25rem rgba(13,110,253,.25)
+// }
+
+// input[type=checkbox]:hover {
+//   border-color: #0d6efd;
+// }
+
+// input[type=checkbox]:checked {
+//   background-color: #0d6efd;
+//   border-color: #0d6efd;
+// }
+
+// input:checked[type=checkbox] {
+//   --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e")
+// }
+
+// input:checked[type=radio] {
+//   --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e")
+// }
+
+// input[type=checkbox]:indeterminate {
+//   background-color: #0d6efd;
+//   border-color: #0d6efd;
+//   --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e")
+// }
+
+// input[type=checkbox]:disabled {
+//   pointer-events: none;
+//   filter: none;
+//   opacity: .5
+// }
+
+// @media (min-width: 576px){
+//   .d-sm-none {
+//     display: none; // !important
+//   }
+// }
+
+// .pagination {
+//   display: flex;
+//   padding-left: 0;
+//   list-style: none;
+//   border-radius: .25rem;
+//   margin-top: 1rem;
+// }
+
+// .page-link {
+//   position: relative;
+//   display: block;
+//   padding: .25rem .5rem; // .5rem .75rem
+//   font-size: .875rem;
+//   line-height: 1.5; // 1.25
+//   margin-left: -1px;
+//   color: #007bff;
+//   background-color: #fff;
+//   border: 1px solid #dee2e6;
+// }
+
+// .dark .page-link {
+//   background-color: #212529;
+// }
+
+// .dark .page-link:hover {
+//   color: #8bb9fe;
+//   background-color: #2b3035;
+// }
+
+// .page-link:not(:disabled):not(.disabled) {
+//   cursor: pointer;
+// }
+
+// .page-item:first-child .page-link {
+//   margin-left: 0;
+//   border-top-left-radius: .25rem;
+//   border-bottom-left-radius: .25rem;
+// }
+
+// .page-item:last-child .page-link {
+//   border-top-right-radius: .25rem;
+//   border-bottom-right-radius: .25rem;
+// }
+
+// .page-item.active .page-link {
+//   z-index: 1;
+//   color: #fff;
+//   background-color: #007bff;
+//   border-color: #007bff;
+// }
+
+// .page-item.disabled .page-link {
+//   color: #6c757d;
+//   pointer-events: none;
+//   // cursor: auto;
+//   background-color: #fff;
+//   border-color: #dee2e6;
+// }
+
+// For Table devexpress
+
+.d-inline-block {
+  display: inline-block;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.d-inline-flex {
+  display: inline-flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-fixed {
+  position: fixed;
+}
+
+.position-sticky {
+  position: sticky;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.w-100 {
+  width: 100%;
+}

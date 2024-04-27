@@ -1,151 +1,103 @@
-import { Authenticated, Refine } from "@refinedev/core"; // , GitHubBanner
-// import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
-import {
-  ErrorComponent,
-  ThemedLayoutV2,
-  ThemedSiderV2,
-  useNotificationProvider,
-} from "@refinedev/antd";
-
-import routerBindings, {
-  CatchAllNavigate,
-  DocumentTitleHandler,
-  NavigateToResource,
-  UnsavedChangesNotifier,
-} from "@refinedev/react-router-v6";
-import dataProvider from "@refinedev/simple-rest";
-import { App as AntdApp } from "antd";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import type { I18nProvider } from "@refinedev/core";
+import { Refine } from "@refinedev/core";
+import routerBindings, { DocumentTitleHandler } from "@refinedev/react-router-v6"; // UnsavedChangesNotifier, 
+import { BrowserRouter } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+// import dataProvider from "@refinedev/simple-rest";
+import { dataProvider } from "@/providers/dataProvider";
 import { authProvider } from "@/authProvider";
-import { Header } from "@/components/header";
-import { ColorModeContextProvider } from "@/contexts/color-mode";
+// import { authProvider } from "@/providers/authProvider";
+// import { ColorModeContextProvider } from "@/contexts/color-mode";
+import { AppContextProvider } from "@/contexts/app";
+import { useNotificationProvider } from "@/providers/notificationProvider"; // @refinedev/antd
+import { RESOURCES } from "@/routes/resources";
+import { AppRoutes } from "@/routes/AppRoutes";
 
-// Pages:
-import Dashboard from '@/pages/dashboard/page';
-// import { BlogPostCreate, BlogPostEdit, BlogPostList, BlogPostShow } from "@/pages/blog-posts";
-import { CategoryCreate, CategoryEdit, CategoryList, CategoryShow } from "@/pages/categories";
-import { ForgotPassword } from "@/pages/forgotPassword";
-import { Login } from "@/pages/login";
-import { Register } from "@/pages/register";
+const customTitleHandler = () => { // { resource, action, params }: any
+  // let title = document.title || import.meta.env.VITE_APP_NAME; // Default title  
+  
+  // if(resource && action) {  
+  //   title = `${resource} ${action} ${params.id}`;  
+  // }
 
-function App() {
+  return document.title || import.meta.env.VITE_APP_NAME; // title
+};
+
+export function App(){
+  const { t, i18n } = useTranslation();
+
+  const i18nProvider: I18nProvider = { // @ts-ignore
+    translate: (key: string, params: object) => t(key, params),
+    changeLocale: (lang: string) => i18n.changeLanguage(lang),
+    getLocale: () => i18n.language,
+  };
+
   return (
     <BrowserRouter>
       {/* <GitHubBanner /> */}
-      <RefineKbarProvider>
-        <ColorModeContextProvider>
-          <AntdApp>
-            {/* <DevtoolsProvider> */}
-              <Refine
-                dataProvider={dataProvider(import.meta.env.VITE_API)}
-                notificationProvider={useNotificationProvider}
-                routerProvider={routerBindings}
-                authProvider={authProvider}
-                resources={[
-                  {
-                    name: "dashboard",
-                    list: "/dashboard",
-                    meta: { label: "Dashboard" }
-                  },
-                  // {
-                  //   name: "blog_posts",
-                  //   list: "/blog-posts",
-                  //   create: "/blog-posts/create",
-                  //   edit: "/blog-posts/edit/:id",
-                  //   show: "/blog-posts/show/:id",
-                  //   meta: {
-                  //     canDelete: true,
-                  //   },
-                  // },
-                  {
-                    name: "categories",
-                    list: "/categories",
-                    create: "/categories/create",
-                    edit: "/categories/edit/:id",
-                    show: "/categories/show/:id",
-                    meta: {
-                      canDelete: true,
+      <AppContextProvider>
+        {/* <DevtoolsProvider> */}
+          <Refine // @ts-ignore
+            dataProvider={dataProvider(Q.api)} // import.meta.env.VITE_API
+            routerProvider={routerBindings}
+            authProvider={authProvider}
+            notificationProvider={useNotificationProvider}
+            i18nProvider={i18nProvider}
+            resources={RESOURCES}
+            options={{
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#disabletelemetry */
+              disableTelemetry: true,
+
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#syncwithlocation */
+              syncWithLocation: true,
+
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#warnwhenunsavedchanges */
+              // warnWhenUnsavedChanges: true,
+              
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#usenewquerykeys */
+              useNewQueryKeys: true,
+              
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#disableserversidevalidation */
+              // disableServerSideValidation: true,
+
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#redirect */
+              redirect: {
+                // If the resource doesn't have a show page defined, the user will be redirected to the list page.
+                // afterCreate: false, // "show"
+                // If the mutation mode is `undoable` or `optimistic`, the redirect happens before the mutation succeeds. Therefore, if there is no known `id` value, the user will be redirected to the list page.
+                // afterClone: "edit",
+                // If set to `false`, no redirect is performed after a successful form mutation.
+                afterEdit: false,
+              },
+
+              /** @DOCS : https://refine.dev/docs/core/refine-component/#reactquery */
+              reactQuery: {
+                clientConfig: {
+                  defaultOptions: {
+                    queries: {
+                      // staleTime: Infinity,
+                      retry: false,
                     },
                   },
-                ]}
-                options={{
-                  disableTelemetry: true,
-                  syncWithLocation: true,
-                  warnWhenUnsavedChanges: true,
-                  useNewQueryKeys: true,
-                  // projectId: "qTyQbm-G9BqZC-wVhLmz",
-                }}
-              >
-                <Routes>
-                  <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-inner"
-                        fallback={<CatchAllNavigate to="/login" />}
-                      >
-                        <ThemedLayoutV2
-                          Header={() => <Header sticky />}
-                          Sider={(props) => <ThemedSiderV2 {...props} fixed />}
-                        >
-                          <Outlet />
-                        </ThemedLayoutV2>
-                      </Authenticated>
-                    }
-                  >
-                    <Route
-                      index
-                      element={<NavigateToResource resource="dashboard" />}
-                    />
+                },
+              },
 
-                    <Route path="/dashboard" element={<Dashboard />} />
+              // projectId: "qTyQbm-G9BqZC-wVhLmz", // ???
+            }}
+          >
+            <AppRoutes />
 
-                    {/* <Route path="/blog-posts">
-                      <Route index element={<BlogPostList />} />
-                      <Route path="create" element={<BlogPostCreate />} />
-                      <Route path="edit/:id" element={<BlogPostEdit />} />
-                      <Route path="show/:id" element={<BlogPostShow />} />
-                    </Route> */}
+            {/* <RefineKbar /> */}
+            {/* <UnsavedChangesNotifier /> */}
+            <DocumentTitleHandler
+              handler={customTitleHandler}
+            />
+          </Refine>
 
-                    <Route path="/categories">
-                      <Route index element={<CategoryList />} />
-                      <Route path="create" element={<CategoryCreate />} />
-                      <Route path="edit/:id" element={<CategoryEdit />} />
-                      <Route path="show/:id" element={<CategoryShow />} />
-                    </Route>
-                    <Route path="*" element={<ErrorComponent />} />
-                  </Route>
-                  <Route
-                    element={
-                      <Authenticated
-                        key="authenticated-outer"
-                        fallback={<Outlet />}
-                      >
-                        <NavigateToResource />
-                      </Authenticated>
-                    }
-                  >
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route
-                      path="/forgot-password"
-                      element={<ForgotPassword />}
-                    />
-                  </Route>
-                </Routes>
-
-                <RefineKbar />
-                <UnsavedChangesNotifier />
-                <DocumentTitleHandler />
-              </Refine>
-
-              {/* <DevtoolsPanel /> */}
-            {/* </DevtoolsProvider> */}
-          </AntdApp>
-        </ColorModeContextProvider>
-      </RefineKbarProvider>
+          {/* <DevtoolsPanel /> */}
+        {/* </DevtoolsProvider> */}
+      </AppContextProvider>
+      {/* </RefineKbarProvider> */}
     </BrowserRouter>
   );
 }
-
-export default App;

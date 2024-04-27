@@ -1,5 +1,6 @@
 import { AuthPage } from "@refinedev/antd";
 
-export const Register = () => {
+// Register
+export default function(){
   return <AuthPage type="register" />;
 };
