@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Menu, Avatar, Modal } from 'antd'; // Dropdown, Button, 
 import { UserOutlined } from '@ant-design/icons'; // SettingOutlined, 
 import { useLocation, NavLink } from 'react-router-dom';
-import { useGetIdentity, useLogout, useWarnAboutChange } from "@refinedev/core";
+import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate } from "@refinedev/core";
 
 const MENUS: MenuProps['items'] = [
   {
@@ -12,18 +12,19 @@ const MENUS: MenuProps['items'] = [
     label: (
       <NavLink to="/" className="block">
         <img 
-          height={41}
+          height={29}
           alt={import.meta.env.VITE_APP_NAME} 
           src="/logo-32x32.png"
         />
       </NavLink>
     ),
-    // className: "mr-auto"
+    className: "after-no",
+    style: { marginRight: 'auto' },
   },
   {
     key: '/contact-us',
     label: (
-      <NavLink to="/contact-us" className="block">
+      <NavLink to="/contact-us" className="p-2">
         Contact Us
       </NavLink>
     ),
@@ -34,6 +35,7 @@ export const Nav = () => {
   const { data: user } = useGetIdentity<IUser>();
   const location = useLocation();
   const { mutate: mutateLogout } = useLogout();
+  const translate = useTranslate();
   const { warnWhen, setWarnWhen } = useWarnAboutChange();
   const [modalApi, modalContextHolder] = Modal.useModal();
   const navRef = useRef<any>();
@@ -65,7 +67,7 @@ export const Nav = () => {
 
   const doLogout = () => {
     if (warnWhen) {
-      if (window.confirm("Apakah Anda yakin ingin pergi? Anda memiliki perubahan yang belum disimpan")) {
+      if (window.confirm(translate("warnWhenUnsavedChanges"))) {
         setWarnWhen(false);
         mutateLogout();
       }
@@ -81,17 +83,14 @@ export const Nav = () => {
     {
       key: "user",
       label: (
-        <div className="flex items-center">
-          <Avatar
-            shape="square"
-            icon={<UserOutlined />}
-            src={user.avatar}
-            alt="PP"
-            className="mr-3"
-          />
-          <b>{user.name || user.username}</b>
-        </div>
+        <Avatar
+          shape="square"
+          icon={<UserOutlined />}
+          src={user.avatar}
+          alt="PP"
+        />
       ),
+      className: "after-no",
       children: [
         {
           key: "/dashboard",
@@ -110,11 +109,22 @@ export const Nav = () => {
   ] : [
     ...MENUS,
     {
+      key: '/login',
+      label: (
+        <NavLink
+          to="/login"
+          className="text-gray-800 font-bold p-2 rounded-lg"
+        >
+          Login
+        </NavLink>
+      ),
+    },
+    {
       key: '/register',
       label: (
         <NavLink
           to="/register"
-          className="text-gray-800 font-bold py-2 px-4 rounded-lg"
+          className="text-gray-800 font-bold p-2 rounded-lg"
         >
           Register
         </NavLink>
@@ -123,21 +133,20 @@ export const Nav = () => {
   ];
 
   return (
-    <header className="w-full border-b border-gray-400 !sticky top-0 z-1051 bg-white">
+    <header className="h-14 w-full border-b border-zinc-300 !sticky top-0 z-1051 bg-white">
       <nav 
         ref={navRef}
-        className="xl_px-4 xl_max-w-screen-xl mx-auto relative"
+        className="h-full px-2 xl_max-w-screen-xl mx-auto relative"
       >
         <Menu 
           id="navMain"
           mode="horizontal"
           triggerSubMenuAction="click"
           style={{ borderBottom: 0 }}
-          className="h-14 items-center"
+          className="h-full items-center"
           items={menuItems}
           selectedKeys={[location.pathname !== '/' ? location.pathname : '']}
           getPopupContainer={() => navRef.current}
-          // expandIcon={<i>X</i>}
         />
       </nav>
 

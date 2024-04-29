@@ -1,14 +1,14 @@
 import i18n from 'i18next';
-import detector from 'i18next-browser-languagedetector';
-// import Backend from "i18next-xhr-backend";
+import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpApi, { HttpBackendOptions } from 'i18next-http-backend';
 import { initReactI18next } from "react-i18next";
 
 const LANGS = ["id", "en"];
 
 i18n
-  .use(HttpApi) // Backend
-  .use(detector) // if not use this lng not store in localStorage
+  .use(HttpApi)
+  /** @DOCS : https://github.com/i18next/i18next-browser-languageDetector */
+  .use(LanguageDetector) // if not use this lng not store in localStorage
   .use(initReactI18next)
   .init<HttpBackendOptions>({
     // debug: import.meta.env.DEV, // !import.meta.env.PROD, // import.meta.env.MODE === 'development',

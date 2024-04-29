@@ -107,84 +107,6 @@
   //   inset: 0;
   // }
 
-  // Symbols:
-  // ROLE ACCESS
-  .pie {
-    display: inline-flex;
-    outline: 0;
-  }
-
-  // .pie:empty {
-  //   user-select: none;
-  // }
-
-  // .pie.spinner-border,
-  // .pie:before {
-  //   width: 18px;
-  //   height: 18px;
-  // }
-
-  .pie:before {
-    content: "";
-    display: inline-flex; // block
-    border-radius: 50%;
-    background-color: green;
-    border: 2px solid green;
-    margin-left: auto;
-    margin-right: auto;
-    vertical-align: middle;
-    width: 18px;
-    height: 18px;
-  }
-
-  // .pie.spinner-border:before {
-  //   content: none;
-  // }
-
-  // .pie.ten:before
-  .pie.pie-no-access:before {
-    border: 2px solid #cc0d0d;
-    background-color: transparent;
-    background-image: linear-gradient(90deg, transparent 50%, white 50%), linear-gradient(90deg, white 50%, transparent 50%);
-  }
-
-  // .pie.twentyfive:before
-  .pie.pie-own-record:before {
-    background-color: #ffca00;
-    border: 2px solid #ffca00;
-    background-image: linear-gradient(52.5deg, transparent 50%, white 50%), linear-gradient(127.5deg, white 50%, transparent 50%);
-    /*background-image: linear-gradient(180deg, white 50%, white 70%, green 70%);*/
-  }
-
-  // .pie.fifty:before
-  .pie.pie-businessunit:before {
-    background-color: #ffca00;
-    border: 2px solid #ffca00;
-    background-image: linear-gradient(180deg, white 50%, transparent 50%);
-  }
-
-  // .pie.seventyfive:before
-  .pie.pie-parent-child:before {
-    background-image: linear-gradient(232.5deg, transparent 50%, green 50%), linear-gradient(127.5deg, white 50%, transparent 50%);
-  }
-
-  // .pie.onehundred:before
-  .pie.pie-organization:before {
-    background-image: none;
-  }
-
-  // EVENT EFFECT:
-  // .pie.cursor-pointer:focus-within:before,
-  .pie.cursor-pointer:focus-visible:before,
-  .pie.cursor-pointer:hover:before {
-    box-shadow: 0 0 0 0.2rem rgba(38,143,255,.5);
-  }
-
-  // .pie.cursor-pointer:focus-visible:before,
-  .pie.cursor-pointer:active:before {
-    box-shadow: 0 0 0 0.2rem #007bff;
-  }
-
   // Button
   // .btn-primary {
   //   @apply border-blue-600 focus-visible_ring
@@ -253,9 +175,9 @@
   }
 
   // .a-card-grid-hoverable:hover
-  .antCard-hover-no-border:not(:hover) {
-    box-shadow: none;
-  }
+  // .antCard-hover-no-border:not(:hover) {
+  //   box-shadow: none;
+  // }
 
   .drawerCloseEnd .a-drawer-close {
     margin-inline-end: 0;
@@ -267,20 +189,20 @@
 
 // Custom Theme Styling:
 
-#navMain > .a-menu-item:first-of-type {
-  margin-right: auto; //  !important
-}
+// #navMain > .a-menu-item:first-of-type {
+//   margin-right: auto; //  !important
+// }
 
-*.aInputMd {
-  padding-left: 0;
-  padding-right: 0;
-  border-radius: 0;
-  border-width: 0 0 2px !important;
-}
+// *.aInputMd {
+//   padding-left: 0;
+//   padding-right: 0;
+//   border-radius: 0;
+//   border-width: 0 0 2px !important;
+// }
 
 .a-checkbox .a-checkbox-inner {
   border-width: 2px;
-  border-radius: 0;
+  // border-radius: 0;
 }
 
 // antd Card
@@ -341,10 +263,10 @@
 //   background: rgba(255, 255, 255, .5) !important;
 // }
 
-.a-modal-footer, // .antModal .a-modal-footer,
-.a-modal-confirm-btns { // .antModal .a-modal-confirm-btns
-  text-align: center !important;
-}
+// .a-modal-footer, // .antModal .a-modal-footer,
+// .a-modal-confirm-btns { // .antModal .a-modal-confirm-btns
+//   text-align: center !important;
+// }
 
 // .a-table table {
 //   width: 100% !important;

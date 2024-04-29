@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useDocumentTitle } from "@refinedev/react-router-v6";
 
 //  Page
@@ -7,19 +7,18 @@ export default function(){
   useDocumentTitle(import.meta.env.VITE_APP_NAME);
 
   // useEffect(() => {
-  //   const loader = document.getElementById('_splashScreen');
   //   console.log('loader: ', loader);
-  //   // Show loading
-  //   loader?.classList.remove('hidden');
-    
-  //   return () => { // Hide loading
-  //     loader?.classList.add('hidden');
-  //   }
   // }, []);
 
   return (
     <>
-      <h1>Home</h1>
+      <section className="px-4 xl_max-w-screen-xl mx-auto">
+        <h1>Home</h1>
+
+        {/* {Array.from({ length: 50 }).map((x: any, index: number) => 
+          <p key={index}>DUMMY {index + 1}</p>
+        )} */}
+      </section>
     </>
   );
 }

@@ -6,7 +6,6 @@ import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate, useGetLoca
 import {
   Avatar,
   Layout as AntdLayout,
-  // Space,
   Dropdown,
   Button,
   Modal,
@@ -66,7 +65,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
 
   const doLogout = () => {
     if (warnWhen) {
-      if (window.confirm("Are you sure you want to leave? You have unsaved changes")) {
+      if (window.confirm(translate("warnWhenUnsavedChanges"))) {
         setWarnWhen(false);
         mutateLogout();
       }
@@ -119,7 +118,6 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             overlayStyle={overlayStyle}
           >
             <Button
-              // type="text"
               className="flex items-center h-full px-1" // !p-0
               title={translate("language")}
               icon={
@@ -198,19 +196,15 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             ],
           }}
         >
-          <Button 
-            type="text"
-            className="flex items-center h-full !p-0"
-            icon={
-              <Avatar
-                size={30}
-                shape="square"
-                icon={<FaRegUser />}
-                src={avatar}
-                alt={name || username}
-              />
-            }
-          />
+          <Button className="flex items-center h-full !p-0">
+            <Avatar
+              size={30}
+              shape="square"
+              icon={<FaRegUser />}
+              src={avatar}
+              alt={name || username}
+            />
+          </Button>
         </Dropdown>
       </div>
 

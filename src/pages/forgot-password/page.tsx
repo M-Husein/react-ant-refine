@@ -20,7 +20,6 @@ import {
   theme,
 } from "antd";
 import { useTranslate, useRouterContext, useForgotPassword } from "@refinedev/core";
-import { ThemedTitleV2 } from "@refinedev/antd"; // @components
 
 type ResetPassworProps = ForgotPasswordPageProps<
   LayoutProps,
@@ -50,35 +49,20 @@ const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
 
   const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
 
-  const { mutate: forgotPassword, isLoading } =
-    useForgotPassword<ForgotPasswordFormTypes>();
+  const { mutate: forgotPassword, isLoading } = useForgotPassword<ForgotPasswordFormTypes>();
 
-  const PageTitle =
-    title === false ? null : (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: 32,
-          fontSize: 20,
-        }}
-      >
-        {title ?? <ThemedTitleV2 collapsed={false} />}
-      </div>
-    );
+  const PageTitle = title === false ? null : <h1 className="text-center">{import.meta.env.VITE_APP_NAME}</h1>;
 
   const CardTitle = (
     <Typography.Title
-      level={3}
+      level={4}
       style={{
         color: token.colorPrimaryTextHover,
-        // ...titleStyles,
-
         textAlign: 'center',
         marginBottom: 0,
-        fontSize: 24,
-        lineHeight: '32px',
-        fontWeight: 700,
+        // fontSize: 24,
+        // lineHeight: '32px',
+        // fontWeight: 700,
         overflowWrap: 'break-word',
         hyphens: 'manual',
         textOverflow: 'unset',
@@ -93,10 +77,8 @@ const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
     <Card
       title={CardTitle}
       style={{
-        // ...containerStyles,
         maxWidth: 400,
         margin: 'auto',
-        padding: 32,
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03)',
         backgroundColor: token.colorBgElevated,
       }}
@@ -105,7 +87,6 @@ const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
           borderBottom: 0,
           padding: 0,
         },
-        body: { padding: 0, marginTop: 32 },
       }}
       {...(contentProps ?? {})}
     >
@@ -149,7 +130,6 @@ const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
           {loginLink ?? (
             <Typography.Text
               style={{
-                fontSize: 12,
                 marginLeft: 'auto',
               }}
             >
@@ -195,10 +175,7 @@ const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
   );
 
   return (
-    <Layout 
-      // style={layoutStyles} 
-      {...(wrapperProps ?? {})}
-    >
+    <Layout {...(wrapperProps ?? {})}>
       <Row
         justify="center"
         align="middle"

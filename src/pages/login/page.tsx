@@ -23,15 +23,7 @@ import {
   theme,
 } from "antd";
 import { useLogin, useTranslate, useRouterContext } from "@refinedev/core";
-
-// import {
-//   bodyStyles,
-//   containerStyles,
-//   headStyles,
-//   layoutStyles,
-//   titleStyles,
-// } from "../styles";
-import { ThemedTitleV2 } from "@refinedev/antd"; // @components
+// import { ThemedTitleV2 } from "@refinedev/antd"; // @components
 
 type LoginProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
 /**
@@ -65,41 +57,7 @@ const LoginPage: React.FC<LoginProps> = ({
     v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
   });
 
-  const PageTitle =
-    title === false ? null : (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: 32,
-          fontSize: 20,
-        }}
-      >
-        {title ?? <ThemedTitleV2 collapsed={false} />}
-      </div>
-    );
-
-  const CardTitle = (
-    <Typography.Title
-      level={3}
-      style={{
-        color: token.colorPrimaryTextHover,
-        // ...titleStyles,
-
-        textAlign: 'center',
-        marginBottom: 0,
-        fontSize: 24,
-        lineHeight: '32px',
-        fontWeight: 700,
-        overflowWrap: 'break-word',
-        hyphens: 'manual',
-        textOverflow: 'unset',
-        whiteSpace: 'pre-wrap',
-      }}
-    >
-      {translate("pages.login.title", "Sign in to your account")}
-    </Typography.Title>
-  );
+  const PageTitle = title === false ? null : <h1 className="text-center">{import.meta.env.VITE_APP_NAME}</h1>;
 
   const renderProviders = () => {
     if (providers && providers.length > 0) {
@@ -149,12 +107,9 @@ const LoginPage: React.FC<LoginProps> = ({
 
   const CardContent = (
     <Card
-      title={CardTitle}
       style={{
-        // ...containerStyles,
         maxWidth: 400,
         margin: 'auto',
-        padding: 32,
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03)',
         backgroundColor: token.colorBgElevated,
       }}
@@ -163,7 +118,6 @@ const LoginPage: React.FC<LoginProps> = ({
           borderBottom: 0,
           padding: 0,
         },
-        body: { padding: 0, marginTop: 32 },
       }}
       {...(contentProps ?? {})}
     >
@@ -223,11 +177,7 @@ const LoginPage: React.FC<LoginProps> = ({
           >
             {rememberMe ?? (
               <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox
-                  style={{
-                    fontSize: 12,
-                  }}
-                >
+                <Checkbox>
                   {translate("pages.login.buttons.rememberMe", "Remember me")}
                 </Checkbox>
               </Form.Item>
@@ -237,7 +187,6 @@ const LoginPage: React.FC<LoginProps> = ({
                 to="/forgot-password"
                 style={{
                   color: token.colorPrimaryTextHover,
-                  fontSize: 12,
                   marginLeft: 'auto',
                 }}
               >
@@ -271,7 +220,7 @@ const LoginPage: React.FC<LoginProps> = ({
             marginTop: hideForm ? 16 : 8,
           }}
         >
-          <Typography.Text style={{ fontSize: 12 }}>
+          <Typography.Text>
             {translate(
               "pages.login.buttons.noAccount",
               "Don't have an account?",
@@ -293,10 +242,7 @@ const LoginPage: React.FC<LoginProps> = ({
   );
 
   return (
-    <Layout 
-      // style={layoutStyles} 
-      {...(wrapperProps ?? {})}
-    >
+    <Layout {...(wrapperProps ?? {})}>
       <Row
         justify="center"
         align={hideForm ? "top" : "middle"}

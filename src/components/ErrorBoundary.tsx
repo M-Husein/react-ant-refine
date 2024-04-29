@@ -41,14 +41,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-const ButtonBackTo = ({
-  onClick,
-  ...etc
-}: any) => {
+const ButtonBackTo = (props: any) => {
   // const { data: user } = useGetIdentity<any>();
   const { push } = useNavigation();
 
-  const backTo = (e: any) => {
+  const backTo = () => { // e: any
     let path = "/";
     
     if(window.location.pathname.startsWith('/admin')){
@@ -61,13 +58,13 @@ const ButtonBackTo = ({
     
     push(path);
 
-    onClick?.(e);
+    // props?.onClick?.(e);
   }
 
   return (
     <Button
       type="primary"
-      {...etc}
+      {...props}
       onClick={backTo}
     >
       Back to Home

@@ -1,7 +1,6 @@
 {
   "pages": {
     "login": {
-      "title": "Masuk ke akun Anda",
       "signin": "Sign in",
       "signup": "Sign up",
       "divider": "atau",
@@ -33,6 +32,20 @@
         "submit": "Kirim instruksi pengaturan ulang"
       }
     },
+    "register": {
+      "title": "Daftarkan akun Anda",
+      "fields": {
+        "email": "Email",
+        "password": "Password"
+      },
+      "errors": {
+        "validEmail": "Alamat email salah"
+      },
+      "buttons": {
+        "submit": "Daftar",
+        "haveAccount": "Punya akun?"
+      }
+    },
     "updatePassword": {
       "title": "Update password",
       "fields": {
@@ -51,9 +64,6 @@
       "backHome": "Kembali ke Home",
       "resource404": "Apakah Anda yakin telah membuat sumber daya {{resource}}.",
       "unspecific": "Terjadi Kesalahan"
-    },
-    "activePeriod": {
-      "confirmClose": "Apakah Anda yakin ingin menutup periode "
     }
   },
   "actions": {
@@ -82,7 +92,7 @@
     "notAccessTitle": "Anda tidak memiliki izin untuk mengakses",
     "deleteSelected": "Hapus yang dipilih"
   },
-  "warnWhenUnsavedChanges": "Anda yakin ingin keluar? Anda memiliki perubahan yang belum disimpan.",
+  "warnWhenUnsavedChanges": "Anda memiliki perubahan yang belum disimpan, Anda yakin ingin keluar?",
   "notifications": {
     "success": "Berhasil",
     "error": "Error (Kode status: {{statusCode}})",
@@ -121,17 +131,11 @@
   "noData": "Tidak ada data",
   "reload": "Muat ulang",
   "yes": "Ya",
-  "backHome": "Kembali ke Home",
   "activate": "Mengaktifkan",
   "deactivate": "Menonaktifkan",
   "download": "Unduh",
-  "uploadInfo": "Klik atau seret file ke area ini untuk diunggah",
   "toProcess": "memproses",
   "haveAccount": "Punya akun?",
-  "documentTitle": {
-    "default": "MYCO",
-    "suffix": " • MYCO"
-  },
   "dashboard": {
     "title": "Dashboard"
   }

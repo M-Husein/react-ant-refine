@@ -22,7 +22,6 @@ import {
   theme,
 } from "antd";
 import { useTranslate, useRouterContext, useRegister } from "@refinedev/core";
-import { ThemedTitleV2 } from "@refinedev/antd"; // @components
 
 type RegisterProps = RegisterPageProps<LayoutProps, CardProps, FormProps>;
 /**
@@ -54,41 +53,7 @@ const RegisterPage: React.FC<RegisterProps> = ({
     v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
   });
 
-  const PageTitle =
-    title === false ? null : (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: 32,
-          fontSize: 20,
-        }}
-      >
-        {title ?? <ThemedTitleV2 collapsed={false} />}
-      </div>
-    );
-
-  const CardTitle = (
-    <Typography.Title
-      level={3}
-      style={{
-        color: token.colorPrimaryTextHover,
-        // ...titleStyles,
-
-        textAlign: 'center',
-        marginBottom: 0,
-        fontSize: 24,
-        lineHeight: '32px',
-        fontWeight: 700,
-        overflowWrap: 'break-word',
-        hyphens: 'manual',
-        textOverflow: 'unset',
-        whiteSpace: 'pre-wrap',
-      }}
-    >
-      {translate("pages.register.title", "Sign up for your account")}
-    </Typography.Title>
-  );
+  const PageTitle = title === false ? null : <h1 className="text-center">{import.meta.env.VITE_APP_NAME}</h1>;
 
   const renderProviders = () => {
     if (providers && providers.length > 0) {
@@ -139,12 +104,9 @@ const RegisterPage: React.FC<RegisterProps> = ({
 
   const CardContent = (
     <Card
-      title={CardTitle}
       style={{
-        // ...containerStyles,
         maxWidth: 400,
         margin: 'auto',
-        padding: 32,
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03)',
         backgroundColor: token.colorBgElevated,
       }}
@@ -153,7 +115,6 @@ const RegisterPage: React.FC<RegisterProps> = ({
           borderBottom: 0,
           padding: 0,
         },
-        body: { padding: 0, marginTop: 32 },
       }}
       {...(contentProps ?? {})}
     >
@@ -209,14 +170,14 @@ const RegisterPage: React.FC<RegisterProps> = ({
             {loginLink ?? (
               <Typography.Text
                 style={{
-                  fontSize: 12,
                   marginLeft: 'auto',
                 }}
               >
                 {translate(
-                  "pages.login.buttons.haveAccount",
+                  "pages.register.buttons.haveAccount",
                   "Have an account?",
-                )}{" "}
+                )}
+                {" "}
                 <ActiveLink
                   to="/login"
                   style={{
@@ -254,12 +215,8 @@ const RegisterPage: React.FC<RegisterProps> = ({
             marginTop: hideForm ? 16 : 8,
           }}
         >
-          <Typography.Text
-            style={{
-              fontSize: 12,
-            }}
-          >
-            {translate("pages.login.buttons.haveAccount", "Have an account?")}
+          <Typography.Text>
+            {translate("pages.register.buttons.haveAccount", "Have an account?")}
             {" "}
             <ActiveLink
               to="/login"
@@ -277,10 +234,7 @@ const RegisterPage: React.FC<RegisterProps> = ({
   );
 
   return (
-    <Layout 
-      // style={layoutStyles} 
-      {...(wrapperProps ?? {})}
-    >
+    <Layout {...(wrapperProps ?? {})}>
       <Row
         justify="center"
         align={hideForm ? "top" : "middle"}

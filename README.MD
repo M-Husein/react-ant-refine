@@ -2,6 +2,14 @@
 
 User Interface for Web App
 
+1. [React](https://react.dev/)
+2. [Vite](https://vitejs.dev/)
+3. [Ant Design](https://ant.design/components/overview/)
+4. [Refine](https://refine.dev/docs/)
+5. [React Router](https://reactrouter.com/)
+6. [React Hook Form](https://react-hook-form.com/get-started)
+7. [tailwindcss](https://tailwindcss.com/)
+
 <div align="center" style="margin: 30px;">
     <a href="https://refine.dev">
     <img alt="refine logo" src="https://refine.ams3.cdn.digitaloceanspaces.com/readme/refine-readme-banner.png">

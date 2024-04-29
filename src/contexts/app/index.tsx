@@ -5,7 +5,7 @@ import { ConfigProvider, App as AntdApp } from "antd"; // , theme
 import dayjs from 'dayjs';
 import enUS from 'antd/locale/en_US';
 import idID from 'antd/locale/id_ID';
-import 'dayjs/locale/id';
+import 'dayjs/locale/en';
 
 const currentLang = localStorage.getItem("i18nextLng") || 'en';
 
