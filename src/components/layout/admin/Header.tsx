@@ -1,5 +1,4 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
-import type { MenuProps } from "antd";
 import type { IUser } from '@/types/Types';
 import { useEffect } from "react";
 import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate, useGetLocale, useSetLocale } from "@refinedev/core";
@@ -15,14 +14,8 @@ import {
 // import { DownOutlined } from "@ant-design/icons"; // , MoonFilled, SunFilled, SettingOutlined
 import { FaRegUser } from "react-icons/fa";
 import { useLocation, NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import dayjs from 'dayjs';
 // import { useApp } from "@/contexts/app";
-
-const LANGUAGE: { [key: string]: string } = {
-  id: "Indonesia",
-  en: "English",
-};
+import { LanguageMenu } from '@/components/LanguageMenu';
 
 const overlayStyle = {
   left: 'auto',
@@ -34,34 +27,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
   const { name, username, email, avatar } = user || {};
 
   // const { mode, setMode } = useApp();
-  const { i18n } = useTranslation();
-  const locale = useGetLocale();
-  const currentLocale = locale();
-  const changeLanguage = useSetLocale();
   const translate = useTranslate();
   const location = useLocation();
   const { mutate: mutateLogout } = useLogout();
   const { warnWhen, setWarnWhen } = useWarnAboutChange();
   const [modalApi, modalContextHolder] = Modal.useModal();
-
-  const languageMenus: MenuProps["items"] = [...(i18n.languages || [])]
-    .sort()
-    .map((lang: string) => ({
-      key: lang,
-      onClick: () => {
-        dayjs.locale(lang);
-        changeLanguage(lang);
-      },
-      icon: (
-        <Avatar
-          size={16}
-          shape="square"
-          alt={lang}
-          src={`/media/img/flags/${lang}.svg`}
-        />
-      ),
-      label: LANGUAGE[lang],
-    }));
 
   const doLogout = () => {
     if (warnWhen) {
@@ -105,31 +75,14 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
       className="bg-blue-100 !sticky h-12 flex items-center top-0 z-1051 shadow"
       id="navMain"
     >
-      <div className="relative ml-auto flex items-center">
+      <div className="relative h-12 ml-auto flex items-center">
         <div className="relative mr-2">
-          <Dropdown
-            trigger={['click']}
-            placement="bottomRight"
-            menu={{
-              items: languageMenus,
-              selectedKeys: currentLocale ? [currentLocale] : [],
+          <LanguageMenu
+            overlayStyle={{
+              left: 'auto',
+              right: 0
             }}
-            getPopupContainer={(triggerNode: any) => triggerNode.parentElement}
-            overlayStyle={overlayStyle}
-          >
-            <Button
-              className="flex items-center h-full px-1" // !p-0
-              title={translate("language")}
-              icon={
-                <Avatar
-                  size={22} // 16
-                  shape="square"
-                  alt={currentLocale}
-                  src={`/media/img/flags/${currentLocale}.svg`}
-                />
-              }
-            />
-          </Dropdown>
+          />
         </div>
 
         {/* <Switch
@@ -196,7 +149,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             ],
           }}
         >
-          <Button className="flex items-center h-full !p-0">
+          <Button className="flex items-center !p-0">
             <Avatar
               size={30}
               shape="square"

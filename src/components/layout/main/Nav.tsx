@@ -5,6 +5,7 @@ import { Menu, Avatar, Modal } from 'antd'; // Dropdown, Button,
 import { UserOutlined } from '@ant-design/icons'; // SettingOutlined, 
 import { useLocation, NavLink } from 'react-router-dom';
 import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate } from "@refinedev/core";
+import { LanguageMenu } from '@/components/LanguageMenu';
 
 const MENUS: MenuProps['items'] = [
   {
@@ -18,7 +19,7 @@ const MENUS: MenuProps['items'] = [
         />
       </NavLink>
     ),
-    className: "after-no",
+    className: "after-no leading-normal",
     style: { marginRight: 'auto' },
   },
   {
@@ -29,6 +30,13 @@ const MENUS: MenuProps['items'] = [
       </NavLink>
     ),
   },
+  {
+    key: 'lang',
+    label: (
+      <LanguageMenu />
+    ),
+    className: "after-no",
+  }
 ];
 
 export const Nav = () => {
@@ -90,7 +98,8 @@ export const Nav = () => {
           alt="PP"
         />
       ),
-      className: "after-no",
+      className: "after-no leading-normal",
+      popupOffset: [-130, 0],
       children: [
         {
           key: "/dashboard",
