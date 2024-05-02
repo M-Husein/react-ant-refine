@@ -1,10 +1,16 @@
 import { AuthProvider } from "@refinedev/core";
 import Cookies from 'js-cookie';
-// /utils/httpRequest
-import { api } from '@/providers/dataProvider'; // , httpRequest
-import { getToken, clearLocalData } from '@/utils/authToken';
+import { fetchApi } from '@/utils/fetchApi';
 
+// @ts-ignore
+const BASE_API = Q.api; // import.meta.env.VITE_API
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
+const TOKEN_KEY_UID = import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q;
+
+const clearLocalData = () => {
+  Cookies.remove(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+}
 
 export const authProvider: AuthProvider = {
   register: async ({ redirectPath, ...data }) => {
@@ -17,11 +23,10 @@ export const authProvider: AuthProvider = {
     };
 
     try {
-      const req: any = await api.post('register', {
-        json: data,
-      })
-      .json();
-
+      const req = await fetchApi(BASE_API + '/register', {
+        method: 'post',
+        body: JSON.stringify(data),
+      });
       // console.log('req: ', req);
 
       if(req?.data){
@@ -53,28 +58,28 @@ export const authProvider: AuthProvider = {
 
     if(identity && password){
       try {
-        const req: any = await api.post('login', {
-          json: { username: identity, password },
-        }).json();
-
+        const req = await fetchApi(BASE_API + '/login', {
+          method: 'post',
+          body: JSON.stringify({ emailOrTelp: identity, password }),
+        });
         // console.log('req: ', req);
 
         if(req?.data){
           Cookies.set(
             TOKEN_KEY, 
-            req.data + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q,
+            req.data + TOKEN_KEY_UID, // parseData, 
             {
               expires: +import.meta.env.VITE_TOKEN_EXP, // new Date(new Date().getTime() + 3 * 60 * 1000)
               // path: "/",
-              sameSite: "strict",
-              secure: window.location.protocol === "https", // true,
+              secure: true,
+              sameSite: 'strict'
             }
           );
 
           // window.location.replace('/');
           return {
             success: true,
-            redirectTo: "/dashboard",
+            redirectTo: "/dashboard", // / | /dashboard
           };
         }
 
@@ -101,39 +106,37 @@ export const authProvider: AuthProvider = {
 
     return {
       success: true,
-      redirectTo: "/login",
+      redirectTo: "/login/",
     };
   },
   check: async () => {
     const errorResponse = {
       authenticated: false,
       logout: true,
-      redirectTo: "/login",
+      redirectTo: "/login/",
       error: {
         name: "Unauthorized",
         message: "Check failed",
       },
     };
 
-    const token = getToken();
+    const token = Cookies.get(TOKEN_KEY);
 
-    if(token){
+    /** @DEV : strict token using key */
+    if(token && token.includes(TOKEN_KEY_UID)){
       try {
-        // httpRequest | api
-        const req: any = await api('application-user/me', {
+        const req = await fetchApi(BASE_API + '/application-user/me', {
           headers: {
-            Authorization: 'Bearer ' + token,
+            Authorization: 'Bearer ' + token.replace(TOKEN_KEY_UID, ''),
           }
-        })
-        .json();
-  
+        });
         // console.log('req: ', req);
   
         if(req?.success){
           sessionStorage.setItem(TOKEN_KEY, JSON.stringify(req.data));
           return { authenticated: true }
         }
-  
+
         // Clear data
         clearLocalData();
   
@@ -147,13 +150,13 @@ export const authProvider: AuthProvider = {
   },
   getPermissions: async () => null,
   getIdentity: async () => {
-    const token = getToken();
+    const token = Cookies.get(TOKEN_KEY);
     const user = sessionStorage.getItem(TOKEN_KEY);
 
     // console.log('token: ', token);
     // console.log('user: ', user);
 
-    if (user && token) {
+    if (user && token && token.includes(TOKEN_KEY_UID)) {
       return JSON.parse(user);
     }
 
@@ -169,12 +172,12 @@ export const authProvider: AuthProvider = {
     };
 
     try { // send password reset link to the user's email address here
-      const req: any = await api('forgot-password/' + username);
+      const req = await fetchApi(BASE_API + '/forgot-password/' + username);
       // console.log('req: ', req);
       if(req?.success){
         return {
           success: true,
-          redirectTo: "/login",
+          redirectTo: "/login/",
         };
       }
       
@@ -191,14 +194,12 @@ export const authProvider: AuthProvider = {
     //   return  {};
     // }
 
-    const statusCode = error?.response?.status;
-
-    if (statusCode === 401 || statusCode === 419) { // error?.response?.status === 401
+    if (error?.response?.status === 401) {
       return {
         error,
         authenticated: false,
         logout: true,
-        redirectTo: "/login",
+        redirectTo: "/login/",
       }
     }
 
