@@ -1,6 +1,6 @@
-import { AxiosInstance } from "axios";
+// import { AxiosInstance } from "axios";
 import { DataProvider } from "@refinedev/core";
-import Cookies from 'js-cookie';
+import { getToken, clearLocalData } from '@/utils/authToken';
 import { httpRequest, generateSort, generateFilter } from "./utils";
 
 class CustomError extends Error { // @ts-ignore
@@ -13,59 +13,46 @@ class CustomError extends Error { // @ts-ignore
 
 type MethodTypes = "get" | "delete" | "head" | "options";
 type MethodTypesWithBody = "post" | "put" | "patch";
-type MethodCommons = "get" | "post" | "put" | "patch"; //  | "head" | "options" | "delete"
+type MethodCommons = "get" | "post" | "put" | "patch";
 
 // Omit<
 //   Required<DataProvider>,
 //   "createMany" | "updateMany" | "deleteMany"
 // >
 
+const ERROR_UNSPECIFIC = "Terjadi kesalahan"; // Something went wrong
+
 export const dataProvider = (
   apiUrl: string,
-  httpClient: AxiosInstance = httpRequest, // axiosInstance
-): DataProvider => {
-  const ERROR_UNSPECIFIC = "Terjadi kesalahan"; // Something went wrong
-  const TOKEN_KEY_UID = import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q;
-  
-  const setupHeaders = (headersFromMeta: any) => {
-    // console.log('httpClient.defaults.headers: ', httpClient.defaults.headers)
-
-    const token = Cookies.get(import.meta.env.VITE_TOKEN_KEY) as string;
-    httpClient.defaults.headers.common.Authorization = token && token.includes(TOKEN_KEY_UID) ? 'Bearer ' + token.replace(TOKEN_KEY_UID, '') : '';
-
-    if (headersFromMeta) {
-      httpClient.defaults.headers = {
-        ...httpClient.defaults.headers,
-        ...headersFromMeta,
-      };
-    }
-  }
-
-  return {
-    getList: async ({ resource, pagination, filters, sorters, meta }) => {
-      const url = apiUrl + '/' + resource;
-  
+  httpClient = httpRequest, // : AxiosInstance = httpRequest
+): DataProvider => ({
+  getList: async ({ resource, pagination, filters, sorters, meta }) => {
+    if(getToken()){
       const {
         current = 1,
         pageSize = 10,
         mode = "server",
       } = pagination ?? {};
   
-      const { headers: headersFromMeta, method, payload, queryContext, params, ...requestOptions } = meta ?? {};
+      // headers: headersFromMeta, payload, params
+      const { method, queryContext, searchParams, ...requestOptions } = meta ?? {};
       // const requestMethod = (method as MethodTypes) ?? "get";
       const requestMethod = (method as MethodCommons) ?? "get";
-  
-      setupHeaders(headersFromMeta);
   
       try {
         const signal = queryContext?.signal; // For abort request
   
-        let response;
+        let response: any;
         switch (method) {
           case "put":
           case "post":
           case "patch":
-            response = await httpClient[requestMethod](url, payload, { signal, params, ...requestOptions });
+            response = await httpClient(resource, { 
+              method: requestMethod, 
+              signal, 
+              searchParams, 
+              ...requestOptions
+            }).json();
             break;
           default:
             const queryFilters = generateFilter(filters);
@@ -89,7 +76,11 @@ export const dataProvider = (
               query._order = _order.join(",");
             }
             
-            response = await httpClient.get(url, { signal, params: { ...params, ...query, ...queryFilters } });
+            response = await httpClient.get(resource, { 
+              signal, 
+              searchParams: { ...searchParams, ...query, ...queryFilters },
+              ...requestOptions
+            }).json();
             break;
         }
         
@@ -109,19 +100,29 @@ export const dataProvider = (
       } catch(e){
         throw e;
       }
-    },
-  
-    getMany: async ({ resource, ids, meta }) => {
-      const { headers, method, queryContext, params, ...requestOptions } = meta ?? {};
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+
+  getMany: async ({ resource, ids, meta }) => {
+    if(getToken()){
+      const { method, queryContext, searchParams, ...requestOptions } = meta ?? {};
       const requestMethod = (method as MethodTypes) ?? "get";
   
-      setupHeaders(headers);
-  
       try {
-        const { data } = await httpClient[requestMethod](
-          apiUrl + '/' + resource,
-          { signal: queryContext?.signal, params: { ...params, id: ids }, ...requestOptions }
-        );
+        const { data }: any = await httpClient(
+          resource, // apiUrl + '/' + resource,
+          { 
+            method: requestMethod,
+            signal: queryContext?.signal, 
+            searchParams: { ...searchParams, id: ids }, 
+            ...requestOptions
+          }
+        )
+        .json();
         
         if(data?.success){
           return data; // { data };
@@ -131,25 +132,44 @@ export const dataProvider = (
       } catch(e){
         throw e;
       }
-    },
-  
-    create: async ({ resource, variables, meta }) => {
-      const { headers, method, ...requestOptions } = meta ?? {}; // , queryContext
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+
+  // { resource, variables, meta } | body, json
+  create: async ({ resource, variables, meta }) => {
+    if(getToken()){
+      const { method, ...requestOptions } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodCommons) ?? "post"; // MethodTypesWithBody | MethodCommons
-      
-      setupHeaders(headers);
 
       // console.log('create requestOptions: ', requestOptions)
   
       try {
-        const { data } = await httpClient[requestMethod](
-          apiUrl + '/' + resource, 
-          // @ts-ignore
-          variables,
-          /** @DEV : must check & test (use or not) */
-          requestOptions
-          // { signal: queryContext?.signal, ...requestOptions }
-          // { ...queryContext, ...requestOptions }
+        // const { data }: any = await httpClient[requestMethod](
+        //   apiUrl + '/' + resource, 
+        //   // @ts-ignore
+        //   variables,
+        //   /** @DEV : must check & test (use or not) */
+        //   requestOptions
+        //   // { signal: queryContext?.signal, ...requestOptions }
+        //   // { ...queryContext, ...requestOptions }
+        // );
+
+        // const parsePayload = typeof variables === 'string' ? {
+        //   body: variables
+        // }
+
+        const { data }: any = await httpClient(
+          resource, // apiUrl + '/' + resource, 
+          {
+            method: requestMethod,
+            // body,
+            json: variables,
+            ...requestOptions
+          }
         );
 
         // console.log('queryContext: ', queryContext)
@@ -170,135 +190,191 @@ export const dataProvider = (
       } catch(e) {
         throw e;
       }
-    },
-  
-    update: async ({ resource, id, variables, meta }) => {
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+
+  update: async ({ resource, id, variables, meta }) => {
+    if(getToken()){
       const { headers, method } = meta ?? {}; // , queryContext, ...requestOptions
       const requestMethod = (method as MethodTypesWithBody) ?? "put"; // patch
   
-      setupHeaders(headers);
+      // setupHeaders(headers);
   
       try {
-        const { data } = await httpClient[requestMethod](
-          `${apiUrl}/${resource}${id ? '/' + id : ''}`,
-          variables,
+        // const { data } = await httpClient[requestMethod](
+        //   `${apiUrl}/${resource}${id ? '/' + id : ''}`,
+        //   variables,
+        //   /** @DEV : must check & test (use or not) */
+        //   // { signal: queryContext?.signal, ...requestOptions }
+        //   // { ...queryContext, ...requestOptions }
+        // );
+
+        const { data }: any = await httpClient(
+          resource + (id ? '/' + id : ''), // `${apiUrl}/${resource}${id ? '/' + id : ''}`,
+          {
+            method: requestMethod,
+            json: variables,
+            headers,
+          }
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal, ...requestOptions }
           // { ...queryContext, ...requestOptions }
         );
   
         if(data?.success){
-          return data; // { data };
+          return data;
         }
         
         throw new CustomError('UpdateError', ERROR_UNSPECIFIC, data);
       } catch(e) {
         throw e;
       }
-    },
-  
-    getOne: async ({ resource, id, meta }) => {
-      const { headers, method, queryContext, ...requestOptions } = meta ?? {};
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+
+  getOne: async ({ resource, id, meta }) => {
+    if(getToken()){
+      const { method, queryContext, ...requestOptions } = meta ?? {};
       const requestMethod = (method as MethodTypes) ?? "get";
   
-      setupHeaders(headers);
-  
       try {
-        const { data } = await httpClient[requestMethod](
-          `${apiUrl}/${resource}${id ? '/' + id : ''}`,
-          { signal: queryContext?.signal, ...requestOptions }
+        const { data }: any = await httpClient(
+          resource + (id ? '/' + id : ''), // `${apiUrl}/${resource}${id ? '/' + id : ''}`,
+          { 
+            method: requestMethod,
+            signal: queryContext?.signal, 
+            ...requestOptions
+          }
         );
   
         if(data?.success){
-          return data; // { data };
+          return data;
         }
         
         throw new CustomError('ReadError', ERROR_UNSPECIFIC, data);
       } catch(e) {
         throw e;
       }
-    },
-    
-    deleteOne: async ({ resource, id, variables, meta }) => {
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+  
+  deleteOne: async ({ resource, id, variables, meta }) => {
+    if(getToken()){
       const { headers, method } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
-      setupHeaders(headers);
-  
       try {
-        const { data } = await httpClient[requestMethod](
-          `${apiUrl}/${resource}/${id}`, 
+        const { data }: any = await httpClient(
+          resource + "/" + id, // `${apiUrl}/${resource}/${id}`, 
           {
-            data: variables,
+            method: requestMethod,
+            headers,
+            json: variables,
           },
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal }
         );
   
         if(data?.success){
-          return data; // { data };        
+          return data;      
         }
         
         throw new CustomError('DeleteError', ERROR_UNSPECIFIC, data);
       } catch(e){
         throw e;
       }
-    },
-  
-    deleteMany: async ({ resource, ids, meta }) => { // variables
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+
+  deleteMany: async ({ resource, ids, meta }) => { // variables
+    if(getToken()){
       const { headers, method } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
-      setupHeaders(headers);
-  
       try {
-        const { data } = await httpClient[requestMethod](
+        const { data }: any = await httpClient(
           apiUrl + '/' + resource, 
-          { data: ids }, // , variables
+          { 
+            method: requestMethod,
+            headers,
+            json: ids
+          }, // , variables
+
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal }
         );
   
         if(data?.success){
-          return data; // { data };        
+          return data;      
         }
         
         throw new CustomError('DeleteManyError', ERROR_UNSPECIFIC, data);
       } catch(e) {
         throw e;
       }
-    },
-  
-    getApiUrl: () => {
-      return apiUrl;
-    },
-  
-    custom: async ({
-      url,
-      method,
-      filters,
-      sorters,
-      payload,
-      query,
-      headers,
-      meta: { queryContext, signal: abortSignal, params, ...requestOptions } = {},
-    }) => {
-      setupHeaders(headers);
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
 
+  getApiUrl: () => {
+    return apiUrl;
+  },
+
+  custom: async ({
+    url,
+    method,
+    filters,
+    sorters,
+    payload, 
+    query,
+    headers,
+    meta: { queryContext, signal: abortSignal, searchParams, ...requestOptions } = {},
+  }) => {
+    if(getToken()){
       const signal = abortSignal || queryContext?.signal;
-  
+
       try {
-        let axiosResponse;
+        let httpResponse;
         switch (method) {
           case "put":
           case "post":
           case "patch":
-            axiosResponse = await httpClient[method](url, payload, { signal, params, ...requestOptions });
+            httpResponse = await httpClient(url, { 
+              method, 
+              json: payload,
+              headers,
+              signal, 
+              searchParams, 
+              ...requestOptions
+            });
             break;
           case "delete":
-            axiosResponse = await httpClient.delete(url, {
-              data: payload,
+            httpResponse = await httpClient.delete(url, {
+              // data: payload,
+              // body,
+              json: payload,
+              headers,
               signal,
+              ...requestOptions
             });
             break;
           default:
@@ -316,20 +392,29 @@ export const dataProvider = (
         
             const filterQuery = filters ? generateFilter(filters) : {};
 
-            axiosResponse = await httpClient.get(url, { signal, params: { ...params, ...filterQuery, ...sortQuery, ...query } });
+            httpResponse = await httpClient.get(url, { 
+              headers,
+              signal,
+              searchParams: { ...searchParams, ...filterQuery, ...sortQuery, ...query },
+              ...requestOptions
+            });
             break;
         }
   
-        const { data } = axiosResponse;
+        const { data }: any = httpResponse;
   
         if(data?.success){
-          return Promise.resolve(data); // { data }    
+          return Promise.resolve(data); 
         }
         
         throw new CustomError(method, ERROR_UNSPECIFIC, data);
       } catch(e) {
         throw e;
       }
-    },
-  }
-};
+    }
+    else{
+      clearLocalData();
+      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+    }
+  },
+});
