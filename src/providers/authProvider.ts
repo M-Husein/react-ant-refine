@@ -2,7 +2,7 @@ import { AuthProvider } from "@refinedev/core";
 import Cookies from 'js-cookie';
 // /utils/httpRequest
 import { api } from '@/providers/dataProvider'; // , httpRequest
-import { getToken, clearLocalData } from '@/utils/authToken';
+import { getToken, clearToken } from '@/utils/authToken';
 
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
@@ -94,7 +94,7 @@ export const authProvider: AuthProvider = {
     return errorResponse;
   },
   logout: async () => { // params: any
-    clearLocalData();
+    clearToken();
 
     const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
     bc.postMessage({ type: "LOGOUT" });
@@ -135,7 +135,7 @@ export const authProvider: AuthProvider = {
         }
   
         // Clear data
-        clearLocalData();
+        clearToken();
   
         return errorResponse;
       } catch(e){

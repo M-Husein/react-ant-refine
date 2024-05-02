@@ -1,6 +1,6 @@
 // import { AxiosInstance } from "axios";
 import { DataProvider } from "@refinedev/core";
-import { getToken, clearLocalData } from '@/utils/authToken';
+import { getToken, clearToken } from '@/utils/authToken';
 import { httpRequest, generateSort, generateFilter } from "./utils";
 
 class CustomError extends Error { // @ts-ignore
@@ -102,7 +102,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -134,7 +134,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -192,7 +192,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -235,7 +235,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -265,7 +265,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -297,7 +297,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -330,7 +330,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },
@@ -413,7 +413,7 @@ export const dataProvider = (
       }
     }
     else{
-      clearLocalData();
+      clearToken();
       throw new CustomError('ReadError', ERROR_UNSPECIFIC);
     }
   },

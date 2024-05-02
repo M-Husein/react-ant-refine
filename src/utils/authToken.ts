@@ -20,7 +20,7 @@ export const getToken = () => {
  * Clear auth token etc
  * @returns void
  */
-export function clearLocalData(){
+export function clearToken(){
   Cookies.remove(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
 }

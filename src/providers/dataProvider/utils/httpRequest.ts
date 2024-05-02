@@ -2,17 +2,16 @@
  * @FROM : https://github.com/refinedev/refine/blob/master/packages/simple-rest/src/utils/axios.ts
  */
 // import { HttpError } from "@refinedev/core";
-// import axios from "axios";
 import ky from 'ky';
-import { getToken, clearLocalData } from '@/utils/authToken';
+import { getToken, clearToken } from '@/utils/authToken';
 
-const api = ky.create({ 
+export const api = ky.create({ 
   // @ts-ignore
   prefixUrl: Q.api, // import.meta.env.VITE_API
   retry: 0,
 });
 
-const httpRequest = api.extend({
+export const httpRequest = api.extend({
 	hooks: {
 		beforeRequest: [
 			request => {
@@ -33,13 +32,13 @@ const httpRequest = api.extend({
           // return;
         }
         else{
-          clearLocalData();
+          clearToken();
           // Redirect if token cookie expired
           // window.location.replace('/login');
         }
 
         // if(window.location.pathname){
-        //   clearLocalData();
+        //   clearToken();
         //   // Redirect if token cookie expired
         //   // window.location.replace('/login');
         // }
@@ -83,7 +82,9 @@ const httpRequest = api.extend({
 	},
 });
 
-export { httpRequest, api };
+// export { httpRequest, api };
+
+/** @OLD */
 
 // const httpRequest = axios.create();
 
