@@ -39,8 +39,9 @@ const MENUS: MenuProps['items'] = [
   }
 ];
 
-export const Nav = () => {
-  const { data: user } = useGetIdentity<IUser>();
+export const Nav = ({ user }:  any) => {
+  const { data } = useGetIdentity<IUser>();
+  const userData = data || user;
   const location = useLocation();
   const { mutate: mutateLogout } = useLogout();
   const translate = useTranslate();
@@ -85,8 +86,10 @@ export const Nav = () => {
   }
 
   // console.log('user: ', user)
+  // console.log('data: ', data)
 
-  const menuItems = user ? [
+  /** @NOTE : Add loading menu */
+  const menuItems = userData && user?.authenticated ? [
     ...MENUS,
     {
       key: "user",
@@ -94,7 +97,7 @@ export const Nav = () => {
         <Avatar
           shape="square"
           icon={<UserOutlined />}
-          src={user.avatar}
+          src={userData.avatar}
           alt="PP"
         />
       ),
@@ -115,7 +118,9 @@ export const Nav = () => {
         },
       ],
     },
-  ] : [
+  ] 
+  : 
+  [
     ...MENUS,
     {
       key: '/login',

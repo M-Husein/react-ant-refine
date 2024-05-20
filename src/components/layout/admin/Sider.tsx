@@ -47,6 +47,13 @@ export const Sider = ({
   const deferredSearchValue = useDeferredValue(searchValue);
   const [searchResult, setSearchResult] = useState<any>([]);
 
+  const clickLink = (e: any, route: any) => {
+    if(location.search && location.pathname === route){
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+
   const renderTreeView = (tree: ITreeMenu[], selectedKey?: string) => {
     return tree.map((item: ITreeMenu) => {
       const { icon, label, route, key, name, children, parentName, meta, options } = item;
@@ -70,13 +77,6 @@ export const Sider = ({
             </Menu.SubMenu>
           </CanAccess>
         );
-      }
-
-      const clickLink = (e: any, route: any) => {
-        if(location.search && location.pathname === route){
-          e.preventDefault();
-          e.stopPropagation();
-        }
       }
 
       const UNDEFINED = undefined;
@@ -212,9 +212,6 @@ export const Sider = ({
           mode="inline"
           inlineIndent={9}
           className="pb-2 q-scroll scroll-hover border-0 overflow-auto overscroll-contain flex-1 sider-menu"
-          // style={{ 
-          //   height: 'calc(100% - 48px)' // calc(100% - 57px)
-          // }}
           // selectable={false}
           selectedKeys={selectedKey ? [selectedKey] : []}
           defaultOpenKeys={defaultOpenKeys}

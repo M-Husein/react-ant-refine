@@ -1,13 +1,13 @@
 import { AuthProvider } from "@refinedev/core";
 import Cookies from 'js-cookie';
 // /utils/httpRequest
-import { api } from '@/providers/dataProvider'; // , httpRequest
+import { api, httpRequest } from '@/providers/dataProvider'; // 
 import { getToken, clearToken } from '@/utils/authToken';
 
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
 export const authProvider: AuthProvider = {
-  register: async ({ redirectPath, ...data }) => {
+  register: async ({ redirectPath, ...json }) => {
     const errorResponse = {
       success: false,
       error: {
@@ -17,30 +17,51 @@ export const authProvider: AuthProvider = {
     };
 
     try {
-      const req: any = await api.post('register', {
-        json: data,
-      })
-      .json();
+      await api.get('sanctum/csrf-cookie'); // For cross domain
 
-      // console.log('req: ', req);
+      // const csrfToken = Cookies.get('XSRF-TOKEN') as string;
+      // console.log('csrfToken: ', csrfToken);
 
-      if(req?.data){
-        return {
-          success: true,
-          redirectTo: redirectPath,
-          successNotification: {
-            message: "Registration Successful",
-            description: "You have successfully registered",
-          },
-        };
-      }
+      const req: any = await httpRequest.post('register', { json }).json();
 
-      return errorResponse;
-    } catch(e){
-      return errorResponse;
+      console.log('req: ', req);
+
+      return {
+        success: true,
+        redirectTo: redirectPath,
+        successNotification: {
+          message: "Registration Successful",
+          description: "You have successfully registered",
+        },
+      };
+
+      // if(req?.data){
+      //   return {
+      //     success: true,
+      //     redirectTo: redirectPath,
+      //     successNotification: {
+      //       message: "Registration Successful",
+      //       description: "You have successfully registered",
+      //     },
+      //   };
+      // }
+
+      // return errorResponse;
+    } catch(e: any){
+      // console.log('e: ', e);
+      // return errorResponse;
+      return {
+        ...errorResponse,
+        error: {
+          // ...errorResponse.error,
+          name: e.name || errorResponse.error.name,
+          message: e.message || errorResponse.error.message
+        }
+      };
     }
   },
-  login: async ({ username, email, password /** @DEV_OPTIONS : , remember, providerName */ }) => {
+  
+  login: async ({ email, username, password, remember /** @DEV_OPTIONS : , providerName */ }) => {
     const errorResponse = {
       success: false,
       error: {
@@ -49,32 +70,32 @@ export const authProvider: AuthProvider = {
       },
     };
 
-    const identity = username || email;
-
-    if(identity && password){
+    if((username || email) && password){
       try {
-        const req: any = await api.post('login', {
-          json: { username: identity, password },
+        await api.get('sanctum/csrf-cookie'); // For cross domain
+
+        const req: any = await httpRequest.post('api/login', {
+          json: { email, username, password, remember },
         }).json();
 
         // console.log('req: ', req);
 
-        if(req?.data){
+        if(req?.token){ // req?.data
           Cookies.set(
             TOKEN_KEY, 
-            req.data + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q,
+            req.token + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q,
             {
               expires: +import.meta.env.VITE_TOKEN_EXP, // new Date(new Date().getTime() + 3 * 60 * 1000)
               // path: "/",
               sameSite: "strict",
-              secure: window.location.protocol === "https", // true,
+              secure: window.location.protocol !== "http:", // true,
             }
           );
 
           // window.location.replace('/');
           return {
             success: true,
-            redirectTo: "/dashboard",
+            redirectTo: "/",
           };
         }
 
@@ -85,33 +106,29 @@ export const authProvider: AuthProvider = {
             message: "We apologize that an error occurred. Please try again."
           }
         };
-      }catch(e){
-        // console.log('e: ', e);
-        return errorResponse;
+      }catch(e: any){
+        console.log('e: ', e);
+        // return errorResponse;
+        return {
+          ...errorResponse,
+          error: {
+            // ...errorResponse.error,
+            name: e.name || errorResponse.error.name,
+            message: e.message || errorResponse.error.message
+          }
+        };
       }
     }
 
     return errorResponse;
   },
+
   logout: async () => { // params: any
-    clearToken();
-
-    const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
-    bc.postMessage({ type: "LOGOUT" });
-
-    return {
-      success: true,
-      redirectTo: "/login",
-    };
-  },
-  check: async () => {
     const errorResponse = {
-      authenticated: false,
-      logout: true,
-      redirectTo: "/login",
+      success: false,
       error: {
-        name: "Unauthorized",
-        message: "Check failed",
+        name: "LogoutError",
+        message: "Logout failed",
       },
     };
 
@@ -119,8 +136,59 @@ export const authProvider: AuthProvider = {
 
     if(token){
       try {
-        // httpRequest | api
-        const req: any = await api('application-user/me', {
+        await api.get('sanctum/csrf-cookie'); // For cross domain
+
+        const req: any = await httpRequest.post('api/logout', {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          }
+        })
+        .json();
+  
+        console.log('req: ', req);
+  
+        if(req?.success){
+          clearToken();
+
+          const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
+          bc.postMessage({ type: "LOGOUT" });
+
+          return {
+            success: true,
+            redirectTo: "/login",
+            successNotification: {
+              message: "Logout Successful",
+              description: "You have successfully logged out",
+            },
+          };
+        }
+  
+        return errorResponse;
+      } catch(e){
+        return errorResponse;
+      }
+    }
+
+    return errorResponse;
+  },
+  
+  check: async () => {
+    const errorResponse = {
+      authenticated: false,
+      logout: true,
+      // redirectTo: "/login",
+      error: {
+        name: "Unauthorized",
+        message: "Check failed",
+      },
+    };
+
+    const token = getToken();
+    // console.log('check token: ', token);
+
+    if(token){
+      try {
+        const req: any = await api('api/user', {
           headers: {
             Authorization: 'Bearer ' + token,
           }
@@ -129,9 +197,9 @@ export const authProvider: AuthProvider = {
   
         // console.log('req: ', req);
   
-        if(req?.success){
-          sessionStorage.setItem(TOKEN_KEY, JSON.stringify(req.data));
-          return { authenticated: true }
+        if(req?.id){ // req?.success
+          sessionStorage.setItem(TOKEN_KEY, JSON.stringify(req));
+          return { ...req, authenticated: true }
         }
   
         // Clear data
@@ -145,13 +213,15 @@ export const authProvider: AuthProvider = {
 
     return errorResponse;
   },
+
   getPermissions: async () => null,
+
   getIdentity: async () => {
     const token = getToken();
     const user = sessionStorage.getItem(TOKEN_KEY);
 
-    // console.log('token: ', token);
-    // console.log('user: ', user);
+    // console.log('getIdentity token: ', token);
+    // console.log('getIdentity user: ', user);
 
     if (user && token) {
       return JSON.parse(user);
@@ -159,6 +229,7 @@ export const authProvider: AuthProvider = {
 
     return null;
   },
+
   forgotPassword: async ({ username }) => { // email
     const errorResponse = {
       success: false,
@@ -183,6 +254,7 @@ export const authProvider: AuthProvider = {
       return errorResponse;
     }
   },
+
   onError: async (error) => {
     // console.log('%cauthProvider onError error: ', 'color:yellow', error);
 

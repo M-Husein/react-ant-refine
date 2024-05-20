@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite';
-import react from "@vitejs/plugin-react";
-// import react from "@vitejs/plugin-react-swc";
-import mkcert from 'vite-plugin-mkcert';
+// import react from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react-swc";
+// import mkcert from 'vite-plugin-mkcert';
 import * as path from 'path';
 
 export default defineConfig({
   plugins: [
     react(),
-    mkcert(),
+    // mkcert(),
   ],
   resolve: {
     alias: {

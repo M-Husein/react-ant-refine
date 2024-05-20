@@ -8,7 +8,7 @@ import { dataProvider } from "@/providers/dataProvider";
 import { authProvider } from "@/authProvider";
 // import { authProvider } from "@/providers/authProvider";
 // import { ColorModeContextProvider } from "@/contexts/color-mode";
-import { AppContextProvider } from "@/contexts/app";
+import { AppContextProvider, AppLocale } from "@/contexts/app";
 import { useNotificationProvider } from "@/providers/notificationProvider"; // @refinedev/antd
 import { RESOURCES } from "@/routes/resources";
 import { AppRoutes } from "@/routes/AppRoutes";
@@ -34,70 +34,66 @@ export function App(){
 
   return (
     <BrowserRouter>
-      {/* <GitHubBanner /> */}
       <AppContextProvider>
-        {/* <DevtoolsProvider> */}
-          <Refine // @ts-ignore
-            dataProvider={dataProvider(Q.api)} // import.meta.env.VITE_API
-            routerProvider={routerBindings}
-            authProvider={authProvider}
-            notificationProvider={useNotificationProvider}
-            i18nProvider={i18nProvider}
-            resources={RESOURCES}
-            options={{
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#disabletelemetry */
-              disableTelemetry: true,
+        <Refine // @ts-ignore
+          dataProvider={dataProvider(Q.api)} // import.meta.env.VITE_API
+          routerProvider={routerBindings}
+          authProvider={authProvider}
+          notificationProvider={useNotificationProvider}
+          i18nProvider={i18nProvider}
+          resources={RESOURCES}
+          options={{
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#disabletelemetry */
+            disableTelemetry: true,
 
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#syncwithlocation */
-              syncWithLocation: true,
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#syncwithlocation */
+            syncWithLocation: true,
 
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#warnwhenunsavedchanges */
-              // warnWhenUnsavedChanges: true,
-              
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#usenewquerykeys */
-              useNewQueryKeys: true,
-              
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#disableserversidevalidation */
-              // disableServerSideValidation: true,
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#warnwhenunsavedchanges */
+            // warnWhenUnsavedChanges: true,
+            
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#usenewquerykeys */
+            useNewQueryKeys: true,
+            
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#disableserversidevalidation */
+            // disableServerSideValidation: true,
 
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#redirect */
-              redirect: {
-                // If the resource doesn't have a show page defined, the user will be redirected to the list page.
-                // afterCreate: false, // "show"
-                // If the mutation mode is `undoable` or `optimistic`, the redirect happens before the mutation succeeds. Therefore, if there is no known `id` value, the user will be redirected to the list page.
-                // afterClone: "edit",
-                // If set to `false`, no redirect is performed after a successful form mutation.
-                afterEdit: false,
-              },
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#redirect */
+            redirect: {
+              // If the resource doesn't have a show page defined, the user will be redirected to the list page.
+              // afterCreate: false, // "show"
+              // If the mutation mode is `undoable` or `optimistic`, the redirect happens before the mutation succeeds. Therefore, if there is no known `id` value, the user will be redirected to the list page.
+              // afterClone: "edit",
+              // If set to `false`, no redirect is performed after a successful form mutation.
+              afterEdit: false,
+            },
 
-              /** @DOCS : https://refine.dev/docs/core/refine-component/#reactquery */
-              reactQuery: {
-                clientConfig: {
-                  defaultOptions: {
-                    queries: {
-                      // staleTime: Infinity,
-                      retry: false,
-                    },
+            /** @DOCS : https://refine.dev/docs/core/refine-component/#reactquery */
+            reactQuery: {
+              clientConfig: {
+                defaultOptions: {
+                  queries: {
+                    // staleTime: Infinity,
+                    retry: false,
                   },
                 },
               },
+            },
 
-              // projectId: "qTyQbm-G9BqZC-wVhLmz", // ???
-            }}
-          >
+            // projectId: "qTyQbm-G9BqZC-wVhLmz", // ???
+          }}
+        >
+          <AppLocale>
             <AppRoutes />
+          </AppLocale>
 
-            {/* <RefineKbar /> */}
-            {/* <UnsavedChangesNotifier /> */}
-            <DocumentTitleHandler
-              handler={customTitleHandler}
-            />
-          </Refine>
+          {/* <UnsavedChangesNotifier /> */}
 
-          {/* <DevtoolsPanel /> */}
-        {/* </DevtoolsProvider> */}
+          <DocumentTitleHandler
+            handler={customTitleHandler}
+          />
+        </Refine>
       </AppContextProvider>
-      {/* </RefineKbarProvider> */}
     </BrowserRouter>
   );
 }

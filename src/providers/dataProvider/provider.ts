@@ -27,72 +27,74 @@ export const dataProvider = (
   httpClient = httpRequest, // : AxiosInstance = httpRequest
 ): DataProvider => ({
   getList: async ({ resource, pagination, filters, sorters, meta }) => {
-    if(getToken()){
+    const token = getToken();
+    if(token){
       const {
         current = 1,
         pageSize = 10,
         mode = "server",
       } = pagination ?? {};
   
-      // headers: headersFromMeta, payload, params
-      const { method, queryContext, searchParams, ...requestOptions } = meta ?? {};
+      // payload, params
+      const { method, queryContext, searchParams, headers, ...requestOptions } = meta ?? {};
       // const requestMethod = (method as MethodTypes) ?? "get";
       const requestMethod = (method as MethodCommons) ?? "get";
   
       try {
-        const signal = queryContext?.signal; // For abort request
+        const commonOptions = {
+          signal: queryContext?.signal, // For abort request
+          headers: {
+            ...headers,
+            Authorization: 'Bearer ' + token,
+          },
+          ...requestOptions
+        };
   
         let response: any;
-        switch (method) {
-          case "put":
-          case "post":
-          case "patch":
-            response = await httpClient(resource, { 
-              method: requestMethod, 
-              signal, 
-              searchParams, 
-              ...requestOptions
-            }).json();
-            break;
-          default:
-            const queryFilters = generateFilter(filters);
-            
-            const query: {
-              _start?: number;
-              _end?: number;
-              _sort?: string;
-              _order?: string;
-            } = {};
 
-            if (mode === "server") {
-              query._start = (current - 1) * pageSize;
-              query._end = current * pageSize;
-            }
-
-            const generatedSort = generateSort(sorters);
-            if (generatedSort) {
-              const { _sort, _order } = generatedSort;
-              query._sort = _sort.join(",");
-              query._order = _order.join(",");
-            }
+        if(requestMethod === "post"){
+          response = await httpClient.post(resource, { 
+            ...commonOptions,
+            searchParams,
+          }).json();
+        }
+        else if(method === "get"){
+          const queryFilters = generateFilter(filters);
             
-            response = await httpClient.get(resource, { 
-              signal, 
-              searchParams: { ...searchParams, ...query, ...queryFilters },
-              ...requestOptions
-            }).json();
-            break;
+          const query: {
+            _start?: number;
+            _end?: number;
+            _sort?: string;
+            _order?: string;
+          } = {};
+
+          if (mode === "server") {
+            query._start = (current - 1) * pageSize;
+            query._end = current * pageSize;
+          }
+
+          const generatedSort = generateSort(sorters);
+          if (generatedSort) {
+            const { _sort, _order } = generatedSort;
+            query._sort = _sort.join(",");
+            query._order = _order.join(",");
+          }
+          
+          response = await httpClient.get(resource, { 
+            ...commonOptions,
+            searchParams: { ...searchParams, ...query, ...queryFilters },
+          }).json();
         }
         
-        const { data, headers } = response;
+        const { data, headers: headersResponse } = response;
         // console.log('getList data: ', data)
   
-        if(data?.success){ //  || data?.success !== 'undefined'
+        if(data?.success){
           const resData = data?.data;
           return {
             ...data, // data
-            total: +headers["x-total-count"] || resData?.length || resData?.data?.length,
-          };       
+            total: +headersResponse["x-total-count"] || resData?.length || resData?.data?.length,
+          };
         }
   
         // throw new Error(i18n.t('error.unspecific'));
@@ -108,18 +110,23 @@ export const dataProvider = (
   },
 
   getMany: async ({ resource, ids, meta }) => {
-    if(getToken()){
-      const { method, queryContext, searchParams, ...requestOptions } = meta ?? {};
+    const token = getToken();
+    if(token){
+      const { method, queryContext, searchParams, headers, ...requestOptions } = meta ?? {};
       const requestMethod = (method as MethodTypes) ?? "get";
   
       try {
         const { data }: any = await httpClient(
           resource, // apiUrl + '/' + resource,
           { 
+            ...requestOptions,
             method: requestMethod,
             signal: queryContext?.signal, 
             searchParams: { ...searchParams, id: ids }, 
-            ...requestOptions
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           }
         )
         .json();
@@ -141,8 +148,9 @@ export const dataProvider = (
 
   // { resource, variables, meta } | body, json
   create: async ({ resource, variables, meta }) => {
-    if(getToken()){
-      const { method, ...requestOptions } = meta ?? {}; // , queryContext
+    const token = getToken();
+    if(token){
+      const { method, headers, ...requestOptions } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodCommons) ?? "post"; // MethodTypesWithBody | MethodCommons
 
       // console.log('create requestOptions: ', requestOptions)
@@ -165,10 +173,14 @@ export const dataProvider = (
         const { data }: any = await httpClient(
           resource, // apiUrl + '/' + resource, 
           {
+            ...requestOptions,
             method: requestMethod,
             // body,
             json: variables,
-            ...requestOptions
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           }
         );
 
@@ -198,8 +210,9 @@ export const dataProvider = (
   },
 
   update: async ({ resource, id, variables, meta }) => {
-    if(getToken()){
-      const { headers, method } = meta ?? {}; // , queryContext, ...requestOptions
+    const token = getToken();
+    if(token){
+      const { method, headers } = meta ?? {}; // , queryContext, ...requestOptions
       const requestMethod = (method as MethodTypesWithBody) ?? "put"; // patch
   
       // setupHeaders(headers);
@@ -218,7 +231,10 @@ export const dataProvider = (
           {
             method: requestMethod,
             json: variables,
-            headers,
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           }
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal, ...requestOptions }
@@ -241,17 +257,22 @@ export const dataProvider = (
   },
 
   getOne: async ({ resource, id, meta }) => {
-    if(getToken()){
-      const { method, queryContext, ...requestOptions } = meta ?? {};
+    const token = getToken();
+    if(token){
+      const { method, queryContext, headers, ...requestOptions } = meta ?? {};
       const requestMethod = (method as MethodTypes) ?? "get";
   
       try {
         const { data }: any = await httpClient(
           resource + (id ? '/' + id : ''), // `${apiUrl}/${resource}${id ? '/' + id : ''}`,
           { 
+            ...requestOptions,
             method: requestMethod,
             signal: queryContext?.signal, 
-            ...requestOptions
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           }
         );
   
@@ -271,8 +292,9 @@ export const dataProvider = (
   },
   
   deleteOne: async ({ resource, id, variables, meta }) => {
-    if(getToken()){
-      const { headers, method } = meta ?? {}; // , queryContext
+    const token = getToken();
+    if(token){
+      const { method, headers } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
       try {
@@ -280,8 +302,11 @@ export const dataProvider = (
           resource + "/" + id, // `${apiUrl}/${resource}/${id}`, 
           {
             method: requestMethod,
-            headers,
             json: variables,
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           },
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal }
@@ -303,8 +328,9 @@ export const dataProvider = (
   },
 
   deleteMany: async ({ resource, ids, meta }) => { // variables
-    if(getToken()){
-      const { headers, method } = meta ?? {}; // , queryContext
+    const token = getToken();
+    if(token){
+      const { method, headers } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
       try {
@@ -312,8 +338,11 @@ export const dataProvider = (
           apiUrl + '/' + resource, 
           { 
             method: requestMethod,
-            headers,
-            json: ids
+            json: ids,
+            headers: {
+              ...headers,
+              Authorization: 'Bearer ' + token,
+            },
           }, // , variables
 
           /** @DEV : must check & test (use or not) */
@@ -346,11 +375,19 @@ export const dataProvider = (
     sorters,
     payload, 
     query,
-    headers,
-    meta: { queryContext, signal: abortSignal, searchParams, ...requestOptions } = {},
+    // headers,
+    meta: { queryContext, signal: abortSignal, searchParams, headers, ...requestOptions } = {},
   }) => {
-    if(getToken()){
-      const signal = abortSignal || queryContext?.signal;
+    const token = getToken();
+    if(token){
+      const commonOptions = {
+        ...requestOptions,
+        signal: abortSignal || queryContext?.signal,
+        headers: {
+          ...headers,
+          Authorization: 'Bearer ' + token,
+        },
+      };
 
       try {
         let httpResponse;
@@ -359,22 +396,18 @@ export const dataProvider = (
           case "post":
           case "patch":
             httpResponse = await httpClient(url, { 
+              ...commonOptions,
               method, 
               json: payload,
-              headers,
-              signal, 
               searchParams, 
-              ...requestOptions
             });
             break;
           case "delete":
             httpResponse = await httpClient.delete(url, {
+              ...commonOptions,
               // data: payload,
               // body,
               json: payload,
-              headers,
-              signal,
-              ...requestOptions
             });
             break;
           default:
@@ -393,10 +426,8 @@ export const dataProvider = (
             const filterQuery = filters ? generateFilter(filters) : {};
 
             httpResponse = await httpClient.get(url, { 
-              headers,
-              signal,
+              ...commonOptions,
               searchParams: { ...searchParams, ...filterQuery, ...sortQuery, ...query },
-              ...requestOptions
             });
             break;
         }

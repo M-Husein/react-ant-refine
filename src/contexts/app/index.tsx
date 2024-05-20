@@ -9,8 +9,7 @@ import 'dayjs/locale/en';
 
 const currentLang = localStorage.getItem("i18nextLng") || 'en';
 
-// Initial value for locale date
-dayjs.locale(currentLang);
+dayjs.locale(currentLang); // Initial value for locale date
 
 /** @OPTION : For toggle color scheme */
 // const toggleTheme = (isDark: boolean) => {
@@ -94,12 +93,22 @@ const THEME = {
   },
 };
 
-export const AppContextProvider: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const AppLocale = ({ children }: PropsWithChildren) => {
   const locale = useGetLocale();
   const currentLocale = locale();
 
+  return (
+    <ConfigProvider
+      locale={AntLanguages[currentLocale || currentLang]}
+    >
+      {children}
+    </ConfigProvider>
+  );
+}
+
+export const AppContextProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
   // const isSystemPreferenceDark = window?.matchMedia("(prefers-color-scheme: dark)").matches;
   // const colorModeFromLocalStorage = localStorage.getItem("colorMode");
   // const systemPreference = isSystemPreferenceDark ? "dark" : "light";
@@ -130,7 +139,7 @@ export const AppContextProvider: React.FC<PropsWithChildren> = ({
         prefixCls="a" // Default = "ant" (NOTE: Change in scss / css files too)
         iconPrefixCls="ai" // Default = "anticon" (NOTE: Change in scss / css files too)
         // componentDisabled={true} // For disabled components: Button, Input, Checkbox, Dropdown Button, 
-        locale={AntLanguages[currentLocale || currentLang]}
+        // locale={AntLanguages[currentLocale || currentLang]}
         theme={THEME}
 
         /** @OPTION : Using color scheme light / dark */

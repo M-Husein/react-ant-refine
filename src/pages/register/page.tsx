@@ -129,6 +129,19 @@ const RegisterPage: React.FC<RegisterProps> = ({
           {...formProps}
         >
           <Form.Item
+            name="name"
+            label="Name" // {translate("pages.register.email", "Email")}
+            rules={[
+              { required: true },
+            ]}
+          >
+            <Input
+              size="large"
+              // placeholder={translate("pages.register.fields.email", "Email")}
+            />
+          </Form.Item>
+
+          <Form.Item
             name="email"
             label={translate("pages.register.email", "Email")}
             rules={[
@@ -147,6 +160,7 @@ const RegisterPage: React.FC<RegisterProps> = ({
               placeholder={translate("pages.register.fields.email", "Email")}
             />
           </Form.Item>
+
           <Form.Item
             name="password"
             label={translate("pages.register.fields.password", "Password")}
@@ -160,6 +174,21 @@ const RegisterPage: React.FC<RegisterProps> = ({
               spellCheck={false}
             />
           </Form.Item>
+
+          <Form.Item
+            name="password_confirmation"
+            label="Confirm Password" // {translate("pages.register.fields.password", "Password")}
+            rules={[{ required: true }]}
+          >
+            <Input.Password
+              size="large"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off" 
+              spellCheck={false}
+            />
+          </Form.Item>
+
           <div
             style={{
               display: 'flex',

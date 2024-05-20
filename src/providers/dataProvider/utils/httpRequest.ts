@@ -3,47 +3,18 @@
  */
 // import { HttpError } from "@refinedev/core";
 import ky from 'ky';
-import { getToken, clearToken } from '@/utils/authToken';
+import Cookies from 'js-cookie';
 
 export const api = ky.create({ 
   // @ts-ignore
   prefixUrl: Q.api, // import.meta.env.VITE_API
   retry: 0,
-});
-
-export const httpRequest = api.extend({
-	hooks: {
-		beforeRequest: [
-			request => {
-        // console.log('request: ', request);
-
-        /** @OPTION : For csrf token */
-        // request.credentials === "include" && 
-        // if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)){
-        //   const csrfToken = Cookies.get('XSRF-TOKEN') as string;
-
-        //   csrfToken && request.headers.set('X-XSRF-TOKEN', decodeURIComponent(csrfToken));
-        // }
-
-        const token = getToken();
-
-        if(token){
-          request.headers.set('Authorization', 'Bearer ' + token);
-          // return;
-        }
-        else{
-          clearToken();
-          // Redirect if token cookie expired
-          // window.location.replace('/login');
-        }
-
-        // if(window.location.pathname){
-        //   clearToken();
-        //   // Redirect if token cookie expired
-        //   // window.location.replace('/login');
-        // }
-			}
-		],
+  credentials: "include",
+  // headers: {
+  //   Accept: "application/json",
+  //   "Content-Type": "application/json",
+  // },
+  hooks: {
     beforeError: [
       error => {
         const { response }: any = error;
@@ -79,10 +50,31 @@ export const httpRequest = api.extend({
     ],
 
     // https://github.com/sindresorhus/ky?tab=readme-ov-file#hooksafterresponse
-	},
+  }
 });
 
-// export { httpRequest, api };
+export const httpRequest = api.extend({
+  // @ts-ignore
+  // prefixUrl: Q.api + '/api',
+	hooks: {
+		beforeRequest: [
+			request => {
+        // console.log('request: ', request);
+
+        /** @OPTION : For csrf token */
+        // request.credentials === "include" && 
+        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)){
+          const csrfToken = Cookies.get('XSRF-TOKEN') as string;
+
+          if(csrfToken){
+            // request.credentials = "include";
+            request.headers.set('X-XSRF-TOKEN', decodeURIComponent(csrfToken));
+          }
+        }
+			}
+		],
+	},
+});
 
 /** @OLD */
 
