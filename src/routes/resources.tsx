@@ -51,10 +51,10 @@ export const RESOURCES = [
   ...settingsUrl(),
 
   /** @DEV_ONLY */
-  // {
-  //   name: "devs",
-  //   list: "/devs",
-  // },
+  {
+    name: "devs",
+    list: "/devs",
+  },
 
   /** @DEV_ONLY : Demo Refine */
   // {

@@ -1,10 +1,8 @@
+import { RefineErrorPageProps } from "@refinedev/ui-types";
 import { useEffect } from "react";
 import { useGo, useRouterType, useGetIdentity, useNavigation } from "@refinedev/core"; // , useResource
-import { RefineErrorPageProps } from "@refinedev/ui-types";
 import { Button, Result } from "antd"; // , Typography, Space, Tooltip
 // import { InfoCircleOutlined } from "@ant-design/icons";
-
-// const { Text } = Typography;
 
 /**
  * When the app is navigated to a non-existent route, refine shows a default error page.
@@ -66,12 +64,15 @@ export const ErrorComponent: React.FC<RefineErrorPageProps> = () => {
         <div>
           <p>Sorry, the page you visited does not exist.</p>
 
-          <Button
-            type="primary"
-            onClick={backTo}
-          >
-            Back to Home
-          </Button>
+          {/* Not render when in home page */}
+          {!['/', '/admin'].includes(window.location.pathname) && (
+            <Button
+              type="primary"
+              onClick={backTo}
+            >
+              Back to Home
+            </Button>
+          )}
         </div>
       }
     />

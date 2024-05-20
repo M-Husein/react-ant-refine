@@ -1,24 +1,29 @@
-// import "@refinedev/antd/dist/reset.css";
-import "./style/style.scss";
-
 // import { Suspense } from "react"; // StrictMode
 import { createRoot } from "react-dom/client";
-
 import { App } from "./App";
 // import { SplashScreen } from '@/components/SplashScreen';
 
-// import i18n (needs to be bundled ;))
-import './i18n';
+import './i18n'; // locale
 
-createRoot(document.getElementById("root") as HTMLElement)
+// import "@refinedev/antd/dist/reset.css";
+import "./style/style.scss";
+
+createRoot(document.getElementById("app") as HTMLElement)
   .render(
-    // <Suspense fallback={<SplashScreen />}>
-      <App />
-    // </Suspense>
+    <App />
   );
 
 /*
-<React.StrictMode>
+<Suspense 
+  // fallback={<SplashScreen />}
+  fallback=""
+>
   <App />
-</React.StrictMode>
+</Suspense>
+*/
+
+/*
+<StrictMode>
+  <App />
+</StrictMode>
 */

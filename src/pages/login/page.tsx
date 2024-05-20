@@ -130,8 +130,8 @@ const LoginPage: React.FC<LoginProps> = ({
           onFinish={(values) => login(values)}
           requiredMark={false}
           initialValues={{
-            email: "demo@refine.dev", 
-            password: "demodemo",
+            email: "m.husein27@gmail.com", // demo@refine.dev
+            password: "12345678", // demodemo
             remember: false,
           }}
           {...formProps}

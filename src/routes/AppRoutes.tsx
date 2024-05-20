@@ -33,7 +33,7 @@ const Dashboard = lazy(() => import('@/pages/dashboard/page'));
 // End Admin
 
 // DEV ONLY
-// const Devs = lazy(() => import('@/pages/devs'));
+const Devs = lazy(() => import('@/pages/devs/page'));
 
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -101,7 +101,7 @@ export const AppRoutes = () => {
         {/* <Route path="/profile" element={lazyComponent(Profile)} /> */}
 
         {/** @DEV_ONLY */}
-        {/* <Route path="/devs" element={lazyComponent(Devs)} /> */}
+        <Route path="/devs" element={lazyComponent(Devs)} />
 
         {/* <Route path="*" element={<ErrorComponent />} /> */}
       </Route>

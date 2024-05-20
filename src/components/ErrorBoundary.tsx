@@ -2,6 +2,7 @@ import { ReactNode, ErrorInfo, Component } from 'react'; // , Suspense, lazy
 // import { Link } from "react-router-dom";
 import { Result, Button } from 'antd';
 import { useNavigation } from "@refinedev/core"; // useGetIdentity
+// import { useLocation } from 'react-router-dom'; 
 
 interface ErrorBoundaryProps {
   children?: ReactNode;
@@ -59,6 +60,11 @@ const ButtonBackTo = (props: any) => {
     push(path);
 
     // props?.onClick?.(e);
+  }
+
+  // Not render when in home page
+  if(['/', '/admin'].includes(window.location.pathname)){
+    return null;
   }
 
   return (

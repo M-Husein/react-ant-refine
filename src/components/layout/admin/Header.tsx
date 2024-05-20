@@ -149,13 +149,14 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             ],
           }}
         >
-          <Button className="flex items-center !p-0">
+          <Button className="!p-0">
             <Avatar
               size={30}
               shape="square"
               icon={<FaRegUser />}
               src={avatar}
               alt={name || username}
+              style={{ display: 'flex' }}
             />
           </Button>
         </Dropdown>
