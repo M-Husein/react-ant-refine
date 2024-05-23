@@ -1,7 +1,6 @@
 import { AuthProvider } from "@refinedev/core";
 import Cookies from 'js-cookie';
-// /utils/httpRequest
-import { api, httpRequest } from '@/providers/dataProvider'; // 
+import { api, httpRequest } from '@/providers/dataProvider';
 import { getToken, clearToken } from '@/utils/authToken';
 
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
@@ -17,47 +16,59 @@ export const authProvider: AuthProvider = {
     };
 
     try {
-      await api.get('sanctum/csrf-cookie'); // For cross domain
+      /** @OPTION : For cross domain */
+      // await api.get('sanctum/csrf-cookie');
 
-      // const csrfToken = Cookies.get('XSRF-TOKEN') as string;
-      // console.log('csrfToken: ', csrfToken);
+      const req: any = await httpRequest.post('auth/register', { json }).json();
+      // console.log('req: ', req);
 
-      const req: any = await httpRequest.post('register', { json }).json();
+      if(req?.data){
+        const token = req.data.token;
+        if(token){
+          Cookies.set(
+            TOKEN_KEY, 
+            // token + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q
+            token + import.meta.env.VITE_APP_Q,
+            {
+              // expires: +import.meta.env.VITE_TOKEN_EXP, // new Date(new Date().getTime() + 3 * 60 * 1000)
+              expires: 1,
+              sameSite: "lax", // lax | strict
+              secure: window.location.protocol !== "http:", // true,
+            }
+          );
 
-      console.log('req: ', req);
+          return {
+            success: true,
+            redirectTo: "/",
+            successNotification: {
+              message: "Registration Successful",
+              description: "You have successfully registered",
+            },
+          };
+        }
 
-      return {
-        success: true,
-        redirectTo: redirectPath,
-        successNotification: {
-          message: "Registration Successful",
-          description: "You have successfully registered",
-        },
-      };
+        return {
+          success: true,
+          redirectTo: redirectPath,
+          successNotification: {
+            message: "Registration Successful",
+            description: "You have successfully registered",
+          },
+        };
+      }
 
-      // if(req?.data){
-      //   return {
-      //     success: true,
-      //     redirectTo: redirectPath,
-      //     successNotification: {
-      //       message: "Registration Successful",
-      //       description: "You have successfully registered",
-      //     },
-      //   };
-      // }
-
-      // return errorResponse;
+      return errorResponse;
     } catch(e: any){
       // console.log('e: ', e);
-      // return errorResponse;
-      return {
-        ...errorResponse,
-        error: {
-          // ...errorResponse.error,
-          name: e.name || errorResponse.error.name,
-          message: e.message || errorResponse.error.message
-        }
-      };
+      return errorResponse;
+      // return {
+      //   ...errorResponse,
+      //   error: {
+      //     // ...errorResponse.error,
+      //     name: e.name || errorResponse.error.name,
+      //     message: e.message || errorResponse.error.message
+      //   }
+      // };
     }
   },
   
@@ -72,22 +83,24 @@ export const authProvider: AuthProvider = {
 
     if((username || email) && password){
       try {
-        await api.get('sanctum/csrf-cookie'); // For cross domain
+        /** @OPTION : For cross domain */
+        // await api.get('sanctum/csrf-cookie');
 
-        const req: any = await httpRequest.post('api/login', {
+        const req: any = await httpRequest.post('auth/login', {
           json: { email, username, password, remember },
         }).json();
 
         // console.log('req: ', req);
 
-        if(req?.token){ // req?.data
+        if(req?.data){ // req?.data
           Cookies.set(
             TOKEN_KEY, 
-            req.token + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q,
+            // req.data.token + import.meta.env.VITE_TOKEN_EXP + import.meta.env.VITE_APP_Q,
+            req.data.token + import.meta.env.VITE_APP_Q,
             {
-              expires: +import.meta.env.VITE_TOKEN_EXP, // new Date(new Date().getTime() + 3 * 60 * 1000)
-              // path: "/",
-              sameSite: "strict",
+              // expires: +import.meta.env.VITE_TOKEN_EXP, // new Date(new Date().getTime() + 3 * 60 * 1000)
+              expires: 1,
+              sameSite: "lax", // lax | strict
               secure: window.location.protocol !== "http:", // true,
             }
           );
@@ -107,16 +120,7 @@ export const authProvider: AuthProvider = {
           }
         };
       }catch(e: any){
-        console.log('e: ', e);
-        // return errorResponse;
-        return {
-          ...errorResponse,
-          error: {
-            // ...errorResponse.error,
-            name: e.name || errorResponse.error.name,
-            message: e.message || errorResponse.error.message
-          }
-        };
+        return errorResponse;
       }
     }
 
@@ -136,34 +140,58 @@ export const authProvider: AuthProvider = {
 
     if(token){
       try {
-        await api.get('sanctum/csrf-cookie'); // For cross domain
+        /** @OPTION : For cross domain */
+        // await api.get('sanctum/csrf-cookie');
 
-        const req: any = await httpRequest.post('api/logout', {
+        /** @OPTION : make sure logout api success */
+        // const req: any = await httpRequest.post('auth/logout', {
+        //   keepalive: true,
+        //   headers: {
+        //     Authorization: 'Bearer ' + token,
+        //   }
+        // })
+        // .json();
+
+        await httpRequest.post('auth/logout', {
+          keepalive: true,
           headers: {
             Authorization: 'Bearer ' + token,
           }
-        })
-        .json();
+        });
   
-        console.log('req: ', req);
-  
-        if(req?.success){
-          clearToken();
+        // console.log('req: ', req);
 
-          const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
-          bc.postMessage({ type: "LOGOUT" });
+        clearToken();
 
-          return {
-            success: true,
-            redirectTo: "/login",
-            successNotification: {
-              message: "Logout Successful",
-              description: "You have successfully logged out",
-            },
-          };
-        }
+        const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
+        bc.postMessage({ type: "LOGOUT" });
+
+        return {
+          success: true,
+          redirectTo: "/login",
+          successNotification: {
+            message: "Logout Successful",
+            description: "You have successfully logged out",
+          },
+        };
   
-        return errorResponse;
+        /** @OPTION : make sure logout api success */
+        // if(req?.success){
+        //   clearToken();
+
+        //   const bc = new BroadcastChannel(import.meta.env.VITE_BC_NAME);
+        //   bc.postMessage({ type: "LOGOUT" });
+
+        //   return {
+        //     success: true,
+        //     redirectTo: "/login",
+        //     successNotification: {
+        //       message: "Logout Successful",
+        //       description: "You have successfully logged out",
+        //     },
+        //   };
+        // }
+        // return errorResponse;
       } catch(e){
         return errorResponse;
       }
@@ -188,7 +216,7 @@ export const authProvider: AuthProvider = {
 
     if(token){
       try {
-        const req: any = await api('api/user', {
+        const req: any = await api('auth/user', {
           headers: {
             Authorization: 'Bearer ' + token,
           }
@@ -197,8 +225,8 @@ export const authProvider: AuthProvider = {
   
         // console.log('req: ', req);
   
-        if(req?.id){ // req?.success
-          sessionStorage.setItem(TOKEN_KEY, JSON.stringify(req));
+        if(req?.success){
+          sessionStorage.setItem(TOKEN_KEY, JSON.stringify(req.data));
           return { ...req, authenticated: true }
         }
   
@@ -240,7 +268,7 @@ export const authProvider: AuthProvider = {
     };
 
     try { // send password reset link to the user's email address here
-      const req: any = await api('forgot-password/' + username);
+      const req: any = await api('auth/forgot-password/' + username);
       // console.log('req: ', req);
       if(req?.success){
         return {

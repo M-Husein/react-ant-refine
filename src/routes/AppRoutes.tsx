@@ -4,36 +4,36 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import { Authenticated } from "@refinedev/core"; // , CanAccess
 import { CatchAllNavigate, NavigateToResource } from "@refinedev/react-router-v6";
 import { ErrorComponent } from "@/components/ErrorComponent"; // "@refinedev/antd"
-import { SplashScreen } from '@/components/SplashScreen';
-import { Layout as LayoutMain } from '@/components/layout/main';
-import { Layout as LayoutAdmin } from '@/components/layout/admin';
+import { LoaderApp } from '@/components/LoaderApp';
+import { Layout as LayoutMain } from '@/components/layout/main/Layout';
+import { Layout as LayoutAdmin } from '@/components/layout/admin/Layout';
 // import { ThemedLayoutV2, ThemedSiderV2, ThemedTitleV2 } from "@refinedev/antd";
 import { lazyComponent } from '@/utils/components';
 
 // Pages:
-const Home = lazy(() => import('@/pages/home/page'));
+const Home = lazy(() => import('@/pages/home/Page'));
 
 // Auth:
-const Login = lazy(() => import('@/pages/login/page'));
-const Register = lazy(() => import('@/pages/register/page'));
-const ForgotPassword = lazy(() => import('@/pages/forgot-password/page'));
-// const ChangePassword = lazy(() => import('@/pages/change-password/page'));
+const Login = lazy(() => import('@/pages/login/Page'));
+const Register = lazy(() => import('@/pages/register/Page'));
+const ForgotPassword = lazy(() => import('@/pages/forgot-password/Page'));
+// const ChangePassword = lazy(() => import('@/pages/change-password/Page'));
 // End Auth
 
 // Admin
-const Dashboard = lazy(() => import('@/pages/dashboard/page'));
-// const Profile = lazy(() => import('@/pages/profile/page'));
+const Dashboard = lazy(() => import('@/pages/dashboard/Page'));
+// const Profile = lazy(() => import('@/pages/profile/Page'));
 
 // Settings
-// const RolesPermissions = lazy(() => import('@/pages/settings/roles-permissions/page'));
-// const UserManagement = lazy(() => import('@/pages/settings/pengguna/page'));
+// const RolesPermissions = lazy(() => import('@/pages/settings/roles-permissions/Page'));
+// const UserManagement = lazy(() => import('@/pages/settings/pengguna/Page'));
 // const ShowUser = lazy(() => import('@/pages/settings/pengguna/Show'));
 // const CreateUser = lazy(() => import('@/pages/settings/user-management/Create'));
 // END Settings
 // End Admin
 
 // DEV ONLY
-const Devs = lazy(() => import('@/pages/devs/page'));
+const Devs = lazy(() => import('@/pages/devs/Page'));
 
 const appName = import.meta.env.VITE_APP_NAME;
 
@@ -47,8 +47,8 @@ export const AppRoutes = () => {
           </LayoutMain>
         }
       >
-        <Route index element={lazyComponent(Home, <SplashScreen />)} />
-        {/* <Route path="/contact-us" element={lazyComponent(ContactUs, <SplashScreen />)} /> */}
+        <Route index element={lazyComponent(Home, <LoaderApp />)} />
+        {/* <Route path="/contact-us" element={lazyComponent(ContactUs, <LoaderApp />)} /> */}
       </Route>
 
       <Route
@@ -56,7 +56,7 @@ export const AppRoutes = () => {
           <Authenticated
             key="authenticated-inner"
             // appendCurrentPathToQuery={false}
-            loading={<SplashScreen />}
+            loading={<LoaderApp />}
             fallback={<CatchAllNavigate to="/login" />}
           >
             {/* <ThemedLayoutV2
@@ -111,17 +111,17 @@ export const AppRoutes = () => {
           <Authenticated
             key="authenticated-outer"
             // appendCurrentPathToQuery={false}
-            loading={<SplashScreen />}
+            loading={<LoaderApp />}
             fallback={<Outlet />}
           >
             <NavigateToResource />
           </Authenticated>
         }
       >
-        <Route path="/login" element={lazyComponent(Login, <SplashScreen />)} />
-        <Route path="/register" element={lazyComponent(Register, <SplashScreen />)} />
-        <Route path="/forgot-password" element={lazyComponent(ForgotPassword, <SplashScreen />)} />
-        {/* <Route path="/change-password" element={lazyComponent(ChangePassword, <SplashScreen />)} /> */}
+        <Route path="/login" element={lazyComponent(Login, <LoaderApp />)} />
+        <Route path="/register" element={lazyComponent(Register, <LoaderApp />)} />
+        <Route path="/forgot-password" element={lazyComponent(ForgotPassword, <LoaderApp />)} />
+        {/* <Route path="/change-password" element={lazyComponent(ChangePassword, <LoaderApp />)} /> */}
       </Route>
 
       {/** @NOTE : if use here, other layout override */}

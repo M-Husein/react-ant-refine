@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-export const SplashScreen: React.FC = () => {
+export const LoaderApp: React.FC = () => {
   useEffect(() => {
-    const loader = document.getElementById('_splashScreen');
+    const loader = document.getElementById('loaderApp');
     // Show loading
     loader?.classList.remove('hidden');
     
