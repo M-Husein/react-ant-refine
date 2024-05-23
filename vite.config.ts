@@ -15,7 +15,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5127, // Default = 5173
+    // port: 5127, // Default = 5173
     /** @DOCS : https://vitejs.dev/config/server-options.html#server-strictport */
     // strictPort: true, // Default = false
     // https: true,

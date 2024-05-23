@@ -3,7 +3,7 @@ import { FloatButton } from 'antd';
 import { ArrowUpOutlined } from '@ant-design/icons';
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
-import { SplashScreen } from '@/components/SplashScreen';
+import { LoaderApp } from '@/components/LoaderApp';
 
 export const Layout: React.FC<any> = ({
   children,
@@ -11,7 +11,7 @@ export const Layout: React.FC<any> = ({
   const { isLoading, data } = useIsAuthenticated();
 
   if(isLoading){
-    return <SplashScreen />;
+    return <LoaderApp />;
   }
 
   // console.log('data: ', data);

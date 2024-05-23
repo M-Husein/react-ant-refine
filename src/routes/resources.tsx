@@ -5,26 +5,6 @@ import { FaCog, FaUser, FaPlus } from 'react-icons/fa'; // , FaUsers, FaUserTag,
 // import { IoStatsChart, IoCard } from "react-icons/io5";
 // import { IoIosListBox } from "react-icons/io";
 
-export const settingsUrl = (size?: number) => [
-  {
-    name: "apps",
-    list: "/settings/apps",
-    meta: { parent: "settings", label: "Apps", icon: <FaCog size={size} /> },
-  },
-  {
-    name: "users",
-    list: "/admin/settings/users",
-    show: "/admin/settings/users/:id",
-    meta: { parent: "settings", label: "Users", icon: <FaUser size={size} /> },
-  },
-  // {
-  //   name: "team-management",
-  //   list: "/admin/settings/team-management",
-  //   show: "/admin/settings/team-management/:id",
-  //   meta: { parent: "settings", label: "Team Management", icon: <FaUsers size={size} /> },
-  // },
-];
-
 export const RESOURCES = [
   {
     name: "dashboard",
@@ -34,13 +14,13 @@ export const RESOURCES = [
 
   // Parent
   {
-    name: "products",
-    meta: { label: "Products", icon: <FaCog /> },
+    name: "articles",
+    meta: { label: "Articles", icon: <FaCog /> },
   },
   {
-    name: "add-product",
-    list: "/products/add-product",
-    meta: { parent: "products", label: "Add Product", icon: <FaPlus /> },
+    name: "add-articles",
+    list: "/articles/add-article",
+    meta: { parent: "articles", label: "Add Article", icon: <FaPlus /> },
   },
 
   // Parent
@@ -48,7 +28,23 @@ export const RESOURCES = [
     name: "settings",
     meta: { label: "Settings", icon: <FaCog /> },
   },
-  ...settingsUrl(),
+  {
+    name: "apps",
+    list: "/settings/apps",
+    meta: { parent: "settings", label: "Apps", icon: <FaCog /> },
+  },
+  {
+    name: "users",
+    list: "/settings/users",
+    show: "/settings/users/:id",
+    meta: { parent: "settings", label: "Users", icon: <FaUser /> },
+  },
+  // {
+  //   name: "team-management",
+  //   list: "/settings/team-management",
+  //   show: "/settings/team-management/:id",
+  //   meta: { parent: "settings", label: "Team Management", icon: <FaUsers /> },
+  // },
 
   /** @DEV_ONLY */
   {
@@ -59,10 +55,10 @@ export const RESOURCES = [
   /** @DEV_ONLY : Demo Refine */
   // {
   //   name: "categories",
-  //   list: "/admin/categories",
-  //   create: "/admin/categories/create",
-  //   edit: "/admin/categories/edit/:id",
-  //   show: "/admin/categories/show/:id",
+  //   list: "/categories",
+  //   create: "/categories/create",
+  //   edit: "/categories/edit/:id",
+  //   show: "/categories/show/:id",
   //   meta: {
   //     canDelete: true,
   //   },
@@ -79,5 +75,8 @@ export const RESOURCES = [
   //     // hide: true, // https://refine.dev/docs/api-reference/core/components/refine-config/#hide
   //   }
   // },
-];
-
+]
+.map((item: any) => ({
+  ...item,
+  list: "/admin" + item.list
+}));

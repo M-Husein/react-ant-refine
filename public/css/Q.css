@@ -2,7 +2,7 @@
   --q-bg-main:#fff;
   --q-bg-nav:#1677ff;
 }
-#_splashScreen,.nojs{
+#loaderApp,.nojs{
   position:fixed;
   background-color:var(--q-bg-main)
 }

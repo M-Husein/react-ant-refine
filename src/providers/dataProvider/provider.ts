@@ -2,6 +2,7 @@
 import { DataProvider } from "@refinedev/core";
 import { getToken, clearToken } from '@/utils/authToken';
 import { httpRequest, generateSort, generateFilter } from "./utils";
+import i18n from "@/i18n";
 
 class CustomError extends Error { // @ts-ignore
   constructor(name: string, message: string, cause?: any) {
@@ -20,7 +21,7 @@ type MethodCommons = "get" | "post" | "put" | "patch";
 //   "createMany" | "updateMany" | "deleteMany"
 // >
 
-const ERROR_UNSPECIFIC = "Terjadi kesalahan"; // Something went wrong
+// const ERROR_UNSPECIFIC = "Terjadi kesalahan"; // Something went wrong
 
 export const dataProvider = (
   apiUrl: string,
@@ -49,6 +50,9 @@ export const dataProvider = (
           },
           ...requestOptions
         };
+
+        const isGetMethod = requestMethod === "get";
+        const paginationOff = mode === "off";
   
         let response: any;
 
@@ -58,7 +62,7 @@ export const dataProvider = (
             searchParams,
           }).json();
         }
-        else if(method === "get"){
+        else if(isGetMethod){
           const queryFilters = generateFilter(filters);
             
           const query: {
@@ -79,33 +83,44 @@ export const dataProvider = (
             query._sort = _sort.join(",");
             query._order = _order.join(",");
           }
+
+          // const fixQueryParams = { ...searchParams, ...query, ...queryFilters };
           
           response = await httpClient.get(resource, { 
             ...commonOptions,
-            searchParams: { ...searchParams, ...query, ...queryFilters },
+            // searchParams: { ...searchParams, ...query, ...queryFilters },
+            // searchParams: Object.keys(fixQueryParams).length ? fixQueryParams : undefined,
+            searchParams: paginationOff ? searchParams : { ...searchParams, ...query, ...queryFilters },
           }).json();
         }
         
-        const { data, headers: headersResponse } = response;
-        // console.log('getList data: ', data)
+        // const { data, headers: headersResponse, ...otherResponse } = response;
+        // console.log('getList response: ', response)
   
-        if(data?.success){
-          const resData = data?.data;
+        if(response?.success){
+          const resData = response?.data;
+          const parseDatas = isGetMethod ? response : resData;
+
+          if(paginationOff){
+            return parseDatas;
+          }
+
           return {
-            ...data, // data
-            total: +headersResponse["x-total-count"] || resData?.length || resData?.data?.length,
+            ...parseDatas,
+            total: resData?.recordsFiltered || resData?.data?.length || 0,
+            // total: +headersResponse["x-total-count"] || resData?.length || resData?.data?.length,
           };
         }
   
-        // throw new Error(i18n.t('error.unspecific'));
-        throw new CustomError('ReadError', ERROR_UNSPECIFIC, data);
+        // // throw new Error(i18n.t('error.unspecific'));
+        throw new CustomError('ReadError', i18n.t('error.unspecific'), response);
       } catch(e){
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -132,17 +147,17 @@ export const dataProvider = (
         .json();
         
         if(data?.success){
-          return data; // { data };
+          return data;
         }
         
-        throw new CustomError('ReadError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('ReadError', i18n.t('error.unspecific'), data);
       } catch(e){
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -150,39 +165,25 @@ export const dataProvider = (
   create: async ({ resource, variables, meta }) => {
     const token = getToken();
     if(token){
-      const { method, headers, ...requestOptions } = meta ?? {}; // , queryContext
+      const { method, headers, body, ...requestOptions } = meta ?? {}; // , queryContext
       const requestMethod = (method as MethodCommons) ?? "post"; // MethodTypesWithBody | MethodCommons
-
-      // console.log('create requestOptions: ', requestOptions)
   
       try {
-        // const { data }: any = await httpClient[requestMethod](
-        //   apiUrl + '/' + resource, 
-        //   // @ts-ignore
-        //   variables,
-        //   /** @DEV : must check & test (use or not) */
-        //   requestOptions
-        //   // { signal: queryContext?.signal, ...requestOptions }
-        //   // { ...queryContext, ...requestOptions }
-        // );
-
-        // const parsePayload = typeof variables === 'string' ? {
-        //   body: variables
-        // }
-
-        const { data }: any = await httpClient(
-          resource, // apiUrl + '/' + resource, 
+        const req: any = await httpClient(
+          resource,
           {
             ...requestOptions,
             method: requestMethod,
-            // body,
-            json: variables,
+            body,
+            json: body ? undefined : variables,
             headers: {
               ...headers,
               Authorization: 'Bearer ' + token,
             },
           }
-        );
+        ).json();
+
+        // console.log('req: ', req)
 
         // console.log('queryContext: ', queryContext)
         /** @DEV : signal not work if method get */
@@ -194,18 +195,18 @@ export const dataProvider = (
         //   signal: requestMethod === 'get' ? queryContext?.signal : requestOptions.signal,
         // });
   
-        if(data?.success){
-          return data; // { data };
+        if(req?.success){
+          return req;
         }
         
-        throw new CustomError('CreateError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('CreateError', i18n.t('error.unspecific'), req);
       } catch(e) {
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -213,20 +214,10 @@ export const dataProvider = (
     const token = getToken();
     if(token){
       const { method, headers } = meta ?? {}; // , queryContext, ...requestOptions
-      const requestMethod = (method as MethodTypesWithBody) ?? "put"; // patch
-  
-      // setupHeaders(headers);
+      const requestMethod = (method as MethodTypesWithBody) ?? "put";
   
       try {
-        // const { data } = await httpClient[requestMethod](
-        //   `${apiUrl}/${resource}${id ? '/' + id : ''}`,
-        //   variables,
-        //   /** @DEV : must check & test (use or not) */
-        //   // { signal: queryContext?.signal, ...requestOptions }
-        //   // { ...queryContext, ...requestOptions }
-        // );
-
-        const { data }: any = await httpClient(
+        const req: any = await httpClient(
           resource + (id ? '/' + id : ''), // `${apiUrl}/${resource}${id ? '/' + id : ''}`,
           {
             method: requestMethod,
@@ -239,20 +230,20 @@ export const dataProvider = (
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal, ...requestOptions }
           // { ...queryContext, ...requestOptions }
-        );
+        ).json();
   
-        if(data?.success){
-          return data;
+        if(req?.success){
+          return req;
         }
         
-        throw new CustomError('UpdateError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('UpdateError', i18n.t('error.unspecific'), req);
       } catch(e) {
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -263,8 +254,8 @@ export const dataProvider = (
       const requestMethod = (method as MethodTypes) ?? "get";
   
       try {
-        const { data }: any = await httpClient(
-          resource + (id ? '/' + id : ''), // `${apiUrl}/${resource}${id ? '/' + id : ''}`,
+        const req: any = await httpClient(
+          resource + (id ? '/' + id : ''),
           { 
             ...requestOptions,
             method: requestMethod,
@@ -274,20 +265,20 @@ export const dataProvider = (
               Authorization: 'Bearer ' + token,
             },
           }
-        );
+        ).json();
   
-        if(data?.success){
-          return data;
+        if(req?.success){
+          return req;
         }
         
-        throw new CustomError('ReadError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('ReadError', i18n.t('error.unspecific'), req);
       } catch(e) {
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
   
@@ -298,8 +289,8 @@ export const dataProvider = (
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
       try {
-        const { data }: any = await httpClient(
-          resource + "/" + id, // `${apiUrl}/${resource}/${id}`, 
+        const req: any = await httpClient(
+          resource + "/" + id,
           {
             method: requestMethod,
             json: variables,
@@ -310,20 +301,20 @@ export const dataProvider = (
           },
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal }
-        );
+        ).json();
   
-        if(data?.success){
-          return data;      
+        if(req?.success){
+          return req;      
         }
         
-        throw new CustomError('DeleteError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('DeleteError', i18n.t('error.unspecific'), req);
       } catch(e){
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -334,8 +325,8 @@ export const dataProvider = (
       const requestMethod = (method as MethodTypesWithBody) ?? "delete";
   
       try {
-        const { data }: any = await httpClient(
-          apiUrl + '/' + resource, 
+        const req: any = await httpClient(
+          resource, 
           { 
             method: requestMethod,
             json: ids,
@@ -347,20 +338,20 @@ export const dataProvider = (
 
           /** @DEV : must check & test (use or not) */
           // { signal: queryContext?.signal }
-        );
+        ).json();
   
-        if(data?.success){
-          return data;      
+        if(req?.success){
+          return req;      
         }
         
-        throw new CustomError('DeleteManyError', ERROR_UNSPECIFIC, data);
+        throw new CustomError('DeleteManyError', i18n.t('error.unspecific'), req);
       } catch(e) {
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 
@@ -400,16 +391,22 @@ export const dataProvider = (
               method, 
               json: payload,
               searchParams, 
-            });
+            })
+            .json();
+            
             break;
+
           case "delete":
             httpResponse = await httpClient.delete(url, {
               ...commonOptions,
               // data: payload,
               // body,
               json: payload,
-            });
+            })
+            .json();
+
             break;
+
           default:
             let sortQuery = {};
             if (sorters) {
@@ -428,24 +425,26 @@ export const dataProvider = (
             httpResponse = await httpClient.get(url, { 
               ...commonOptions,
               searchParams: { ...searchParams, ...filterQuery, ...sortQuery, ...query },
-            });
+            })
+            .json();
+
             break;
         }
   
-        const { data }: any = httpResponse;
+        const req: any = httpResponse;
   
-        if(data?.success){
-          return Promise.resolve(data); 
+        if(req?.success){
+          return Promise.resolve(req); 
         }
         
-        throw new CustomError(method, ERROR_UNSPECIFIC, data);
+        throw new CustomError(method, i18n.t('error.unspecific'), req);
       } catch(e) {
         throw e;
       }
     }
     else{
       clearToken();
-      throw new CustomError('ReadError', ERROR_UNSPECIFIC);
+      throw new CustomError('ReadError', i18n.t('error.unspecific'));
     }
   },
 });

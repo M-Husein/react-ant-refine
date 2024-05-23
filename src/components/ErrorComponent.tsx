@@ -1,6 +1,6 @@
 import { RefineErrorPageProps } from "@refinedev/ui-types";
 import { useEffect } from "react";
-import { useGo, useRouterType, useGetIdentity, useNavigation } from "@refinedev/core"; // , useResource
+import { useNavigation } from "@refinedev/core"; // useGo, useRouterType, useGetIdentity, useResource
 import { Button, Result } from "antd"; // , Typography, Space, Tooltip
 // import { InfoCircleOutlined } from "@ant-design/icons";
 
@@ -13,15 +13,15 @@ import { Button, Result } from "antd"; // , Typography, Space, Tooltip
 export const ErrorComponent: React.FC<RefineErrorPageProps> = () => {
   // const [errorMessage, setErrorMessage] = useState<string>();
   // const translate = useTranslate();
-  const { data: user } = useGetIdentity<any>();
+  // const { data: user } = useGetIdentity<any>();
+  // const go = useGo();
+  // const routerType = useRouterType();
   const { push } = useNavigation();
-  const go = useGo();
-  const routerType = useRouterType();
 
   // const { resource, action } = useResource();
 
   useEffect(() => {
-    const loader = document.getElementById('_splashScreen');
+    const loader = document.getElementById('loaderApp');
     loader?.classList.add('hidden');
   }, []);
 
@@ -45,15 +45,17 @@ export const ErrorComponent: React.FC<RefineErrorPageProps> = () => {
   const backTo = () => {
     let path = "/";
     
-    // if(window.location.pathname.startsWith('/admin')){
-    //   path += "admin";
-    // }
-
-    if(user?.name === 'system'){
+    if(window.location.pathname.startsWith('/admin')){
       path += "admin";
     }
+
+    // if(user?.name === 'system'){
+    //   path += "admin";
+    // }
     
-    routerType === "legacy" ? push(path) : go({ to: path })
+    // routerType === "legacy" ? push(path) : go({ to: path })
+
+    push(path);
   }
 
   return (

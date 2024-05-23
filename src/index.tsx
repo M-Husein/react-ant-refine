@@ -1,7 +1,7 @@
 // import { Suspense } from "react"; // StrictMode
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
-// import { SplashScreen } from '@/components/SplashScreen';
+// import { LoaderApp } from '@/components/LoaderApp';
 
 import './i18n'; // locale
 
@@ -15,7 +15,7 @@ createRoot(document.getElementById("app") as HTMLElement)
 
 /*
 <Suspense 
-  // fallback={<SplashScreen />}
+  // fallback={<LoaderApp />}
   fallback=""
 >
   <App />
