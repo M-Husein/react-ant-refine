@@ -1,291 +1,216 @@
-import React from "react";
-import {
-  RegisterPageProps,
-  RegisterFormTypes,
-  useRouterType,
-  useLink,
-  useActiveAuthProvider,
-} from "@refinedev/core";
-import {
-  Row,
-  Col,
-  Layout,
-  Card,
-  Typography,
-  Form,
-  Input,
-  Button,
-  LayoutProps,
-  CardProps,
-  FormProps,
-  Divider,
-  theme,
-} from "antd";
-import { useTranslate, useRouterContext, useRegister } from "@refinedev/core";
+// import { useState } from "react";
+import { HttpError, useTranslate, useActiveAuthProvider, useRegister } from "@refinedev/core"; // , RegisterFormTypes
+import { Input, Button } from "antd"; // , Radio
+import { Link } from "react-router-dom";
+import { useForm } from "@refinedev/react-hook-form";
+import { Controller } from 'react-hook-form'; // useForm, 
+// import { MailOutlined, LockOutlined, PhoneOutlined } from '@ant-design/icons';
+// import { FaRegUser } from "react-icons/fa";
+import { Layout } from '@/components/layout/auth/Layout';
+import { Form } from '@/components/forms/Form';
+import { email as emailRegExp } from '@/utils/regExp';
 
-type RegisterProps = RegisterPageProps<LayoutProps, CardProps, FormProps>;
-/**
- * **refine** has register page form which is served on `/register` route when the `authProvider` configuration is provided.
- *
- * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/antd-auth-page/#register} for more details.
- */
-const RegisterPage: React.FC<RegisterProps> = ({
-  providers,
-  loginLink,
-  wrapperProps,
-  contentProps,
-  renderContent,
-  formProps,
-  title,
-  hideForm,
-}) => {
-  const { token } = theme.useToken();
-  const [form] = Form.useForm<RegisterFormTypes>();
+type IFormValues = {
+  name: string;
+  email?: string;
+  // username: string;
+  password: string;
+  c_password: string;
+  // provider?: string; // providerName
+}
+
+export default function Register(){
   const translate = useTranslate();
-  const routerType = useRouterType();
-  const Link = useLink();
-  const { Link: LegacyLink } = useRouterContext();
-
-  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
-
   const authProvider = useActiveAuthProvider();
-  const { mutate: register, isLoading } = useRegister<RegisterFormTypes>({
-    v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
+  const { mutate: register, isLoading } = useRegister<IFormValues>({ // <RegisterFormTypes>
+    v3LegacyAuthProviderCompatible: !!authProvider?.isLegacy 
   });
 
-  const PageTitle = title === false ? null : <h1 className="text-center">{import.meta.env.VITE_APP_NAME}</h1>;
+  const {
+    formState: { errors },
+    control,
+    handleSubmit, 
+    watch,
+  } = useForm<IFormValues, HttpError, IFormValues>();
 
-  const renderProviders = () => {
-    if (providers && providers.length > 0) {
-      return (
-        <>
-          {providers.map((provider) => {
-            return (
-              <Button
-                key={provider.name}
-                type="default"
-                block
-                icon={provider.icon}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                  marginBottom: 8,
-                }}
-                onClick={() =>
-                  register({
-                    providerName: provider.name,
-                  })
-                }
-              >
-                {provider.label}
-              </Button>
-            );
-          })}
+  const password = watch('password');
 
-          {!hideForm && (
-            <Divider>
-              <Typography.Text
-                style={{
-                  color: token.colorTextLabel,
-                }}
-              >
-                {translate("pages.login.divider", "or")}
-              </Typography.Text>
-            </Divider>
-          )}
-        </>
-      );
-    }
+  const doRegister = (values: any) => {
+    register(values);
+  }
 
-    return null;
-  };
-
-  const CardContent = (
-    <Card
-      style={{
-        maxWidth: 400,
-        margin: 'auto',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03)',
-        backgroundColor: token.colorBgElevated,
-      }}
-      styles={{
-        header: {
-          borderBottom: 0,
-          padding: 0,
-        },
-      }}
-      {...(contentProps ?? {})}
-    >
-      {renderProviders()}
-
-      {!hideForm && (
-        <Form<RegisterFormTypes>
-          layout="vertical"
-          form={form}
-          onFinish={(values) => register(values)}
-          requiredMark={false}
-          {...formProps}
+  return (
+    <Layout
+      title="Register"
+      form={
+        <Form
+          disabled={isLoading}
+          onSubmit={handleSubmit(doRegister)}
+          fieldsetClass="space-y-6"
         >
-          <Form.Item
-            name="name"
-            label="Name" // {translate("pages.register.email", "Email")}
-            rules={[
-              { required: true },
-            ]}
-          >
-            <Input
-              size="large"
-              // placeholder={translate("pages.register.fields.email", "Email")}
+          <div>
+            <label htmlFor="uname">Name</label>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  size="large"
+                  id="uname"
+                  className="mt-1"
+                  disabled={isLoading}
+                  status={errors.name ? "error" : ""}
+                  // prefix={<FaRegUser className="mr-1" />}
+                  autoComplete="name"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                />
+              )}
+              rules={{ 
+                required: true,
+                minLength: {
+                  value: 2,
+                  message: "Minimal 2 karakter"
+                },
+                pattern: {
+                  value: /^\S(.*\S)?$/,
+                  message: "Tidak boleh ada spasi, tab / enter di awal & akhir"
+                }
+              }}
             />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label={translate("pages.register.email", "Email")}
-            rules={[
-              { required: true },
-              {
-                type: "email",
-                message: translate(
-                  "pages.register.errors.validEmail",
-                  "Invalid email address",
-                ),
-              },
-            ]}
-          >
-            <Input
-              size="large"
-              placeholder={translate("pages.register.fields.email", "Email")}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            label={translate("pages.register.fields.password", "Password")}
-            rules={[{ required: true }]}
-          >
-            <Input.Password
-              size="large"
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off" 
-              spellCheck={false}
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="password_confirmation"
-            label="Confirm Password" // {translate("pages.register.fields.password", "Password")}
-            rules={[{ required: true }]}
-          >
-            <Input.Password
-              size="large"
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off" 
-              spellCheck={false}
-            />
-          </Form.Item>
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: 24,
-            }}
-          >
-            {loginLink ?? (
-              <Typography.Text
-                style={{
-                  marginLeft: 'auto',
-                }}
-              >
-                {translate(
-                  "pages.register.buttons.haveAccount",
-                  "Have an account?",
-                )}
-                {" "}
-                <ActiveLink
-                  to="/login"
-                  style={{
-                    fontWeight: 700,
-                    color: token.colorPrimaryTextHover,
-                  }}
-                >
-                  {translate("pages.login.signin", "Sign in")}
-                </ActiveLink>
-              </Typography.Text>
+            {errors.name && (
+              <div className="mt-1 text-red-700 text-xs">
+                {errors.name.message || translate("error.required", { name: "Name" })}
+              </div>
             )}
           </div>
 
-          <Form.Item
-            style={{
-              marginBottom: 0,
-            }}
-          >
-            <Button
-              type="primary"
-              size="large"
-              htmlType="submit"
-              loading={isLoading}
-              block
-            >
-              {translate("pages.register.buttons.submit", "Sign up")}
-            </Button>
-          </Form.Item>
-        </Form>
-      )}
-
-      {hideForm && loginLink !== false && (
-        <div
-          style={{
-            marginTop: hideForm ? 16 : 8,
-          }}
-        >
-          <Typography.Text>
-            {translate("pages.register.buttons.haveAccount", "Have an account?")}
-            {" "}
-            <ActiveLink
-              to="/login"
-              style={{
-                fontWeight: 'bold',
-                color: token.colorPrimaryTextHover,
+          <div>
+            <label htmlFor="emailReg">Email</label>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  size="large"
+                  id="emailReg"
+                  className="mt-1"
+                  disabled={isLoading}
+                  inputMode="email"
+                  status={errors.email ? "error" : ""}
+                  // prefix={<MailOutlined className="mr-1" />}
+                  autoComplete="email"
+                  spellCheck={false}
+                />
+              )}
+              rules={{ 
+                required: true, 
+                pattern: {
+                  value: emailRegExp,
+                  message: "Harap masukkan alamat email dengan benar"
+                }
               }}
+            />
+            {errors.email && (
+              <div className="mt-1 text-red-700 text-xs">
+                {errors.email.message || translate("error.required", { name: "Email" })}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="pwd">Password</label>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  size="large"
+                  id="pwd"
+                  className="mt-1"
+                  disabled={isLoading}
+                  status={errors.password ? "error" : ""}
+                  // prefix={<LockOutlined className="mr-1" />}
+                  autoComplete="new-password"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+              )}
+              rules={{
+                required: true,
+                minLength: {
+                  value: 6,
+                  message: "Minimal 6 karakter"
+                },
+              }}
+            />
+            {errors.password && (
+              <div className="mt-1 text-red-700 text-xs">
+                {errors.password.message || translate("error.required", { name: "Password" })}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="confirmPwd">Confirm password</label>
+            <Controller
+              name="c_password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  size="large"
+                  id="confirmPwd"
+                  className="mt-1"
+                  disabled={isLoading}
+                  status={errors.c_password ? "error" : ""}
+                  // prefix={<LockOutlined className="mr-1" />}
+                  autoComplete="new-password"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                />
+              )}
+              rules={{ 
+                required: true,
+                validate: (val: any) => val === password || "Konfirmasi password harus sama dengan password"
+              }}
+            />
+            {errors.c_password && (
+              <div className="mt-1 text-red-700 text-xs">
+                {errors.c_password.message || translate("error.required", { name: "Confirm password" })}
+              </div>
+            )}
+          </div>
+
+          <Button
+            type="primary"
+            size="large"
+            htmlType="submit"
+            className="w-full mt-9"
+            loading={isLoading}
+          >
+            {translate("pages.register.buttons.submit")}
+          </Button>
+
+          <p className="text-center">
+            {translate("pages.register.buttons.haveAccount")}
+            {' '}
+            <Link 
+              to="/login" 
+              tabIndex={isLoading ? -1 : 0} 
+              className={(isLoading ? "pe-none opacity-65 " : "") + "font-bold focus-visible_ring"}
             >
-              {translate("pages.login.signin", "Sign in")}
-            </ActiveLink>
-          </Typography.Text>
-        </div>
-      )}
-    </Card>
+              {translate("pages.login.signin")}
+            </Link>
+          </p>
+        </Form>
+      }
+    />
   );
-
-  return (
-    <Layout {...(wrapperProps ?? {})}>
-      <Row
-        justify="center"
-        align={hideForm ? "top" : "middle"}
-        style={{
-          padding: '16px 0',
-          minHeight: '100dvh',
-          paddingTop: hideForm ? '15dvh' : 16,
-        }}
-      >
-        <Col xs={22}>
-          {renderContent ? (
-            renderContent(CardContent, PageTitle)
-          ) : (
-            <>
-              {PageTitle}
-              {CardContent}
-            </>
-          )}
-        </Col>
-      </Row>
-    </Layout>
-  );
-};
-
-export default RegisterPage;
+}
