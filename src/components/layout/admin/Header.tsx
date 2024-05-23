@@ -1,14 +1,14 @@
 import type { RefineThemedLayoutV2HeaderProps } from "@refinedev/antd";
 import type { IUser } from '@/types/Types';
 import { useEffect } from "react";
-import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate, useGetLocale, useSetLocale } from "@refinedev/core";
+import { useGetIdentity, useLogout, useWarnAboutChange, useTranslate } from "@refinedev/core"; // , useGetLocale, useSetLocale
 import {
   Avatar,
   Layout as AntdLayout,
   Dropdown,
   Button,
   Modal,
-  Badge,
+  // Badge,
   // Switch,
 } from "antd";
 // import { DownOutlined } from "@ant-design/icons"; // , MoonFilled, SunFilled, SettingOutlined
@@ -110,7 +110,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                   >
                     <Avatar
                       className="flex-none"
-                      size={65}
+                      size={55}
                       shape="square"
                       icon={<FaRegUser />}
                       src={avatar}
@@ -129,11 +129,11 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                         </h4>
                       )}
 
-                      <Badge
+                      {/* <Badge
                         // color="#ff7a00"
                         count="View Profile"
                         className="mt-1"
-                      />
+                      /> */}
                     </section>
                   </NavLink>
                 )

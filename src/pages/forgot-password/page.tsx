@@ -1,202 +1,109 @@
-import React from "react";
-import {
-  ForgotPasswordPageProps,
-  ForgotPasswordFormTypes,
-  useRouterType,
-  useLink,
-} from "@refinedev/core";
-import {
-  Row,
-  Col,
-  Layout,
-  Card,
-  Typography,
-  Form,
-  Input,
-  Button,
-  LayoutProps,
-  CardProps,
-  FormProps,
-  theme,
-} from "antd";
-import { useTranslate, useRouterContext, useForgotPassword } from "@refinedev/core";
+import { HttpError, useTranslate, useForgotPassword } from "@refinedev/core";
+import { Input, Button } from "antd";
+import { useForm } from "@refinedev/react-hook-form";
+import { Controller } from 'react-hook-form'; // useForm, 
+import { Link } from "react-router-dom";
+import { Layout } from '@/components/layout/auth/Layout';
+import { Form } from '@/components/forms/Form';
+import { email as emailRegExp } from '@/utils/regExp'; 
 
-type ResetPassworProps = ForgotPasswordPageProps<
-  LayoutProps,
-  CardProps,
-  FormProps
->;
+type IFormValues = {
+  email: string;
+  username?: string;
+}
 
-/**
- * **refine** has forgot password page form which is served on `/forgot-password` route when the `authProvider` configuration is provided.
- *
- * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/antd-auth-page/#forgot-password} for more details.
- */
-const ForgotPasswordPage: React.FC<ResetPassworProps> = ({
-  loginLink,
-  wrapperProps,
-  contentProps,
-  renderContent,
-  formProps,
-  title,
-}) => {
-  const { token } = theme.useToken();
-  const [form] = Form.useForm<ForgotPasswordFormTypes>();
+export default function ForgotPasswordPage(){
   const translate = useTranslate();
-  const routerType = useRouterType();
-  const Link = useLink();
-  const { Link: LegacyLink } = useRouterContext();
+  const TITLE_PAGE = translate("pages.forgotPassword.title");
+  const { mutate: forgotPassword, isLoading } = useForgotPassword<IFormValues>();
 
-  const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
+  const {
+    formState: { errors },
+    control,
+    handleSubmit, 
+  } = useForm<IFormValues, HttpError, IFormValues>();
 
-  const { mutate: forgotPassword, isLoading } = useForgotPassword<ForgotPasswordFormTypes>();
+  const doSubmit = (values: any) => {
+    // forgotPassword({
+    //   username: values.username.trim()
+    // });
 
-  const PageTitle = title === false ? null : <h1 className="text-center">{import.meta.env.VITE_APP_NAME}</h1>;
+    forgotPassword(values)
+  }
 
-  const CardTitle = (
-    <Typography.Title
-      level={4}
-      style={{
-        color: token.colorPrimaryTextHover,
-        textAlign: 'center',
-        marginBottom: 0,
-        // fontSize: 24,
-        // lineHeight: '32px',
-        // fontWeight: 700,
-        overflowWrap: 'break-word',
-        hyphens: 'manual',
-        textOverflow: 'unset',
-        whiteSpace: 'pre-wrap',
-      }}
-    >
-      {translate("pages.forgotPassword.title", "Forgot your password?")}
-    </Typography.Title>
-  );
-
-  const CardContent = (
-    <Card
-      title={CardTitle}
-      style={{
-        maxWidth: 400,
-        margin: 'auto',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.02), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03)',
-        backgroundColor: token.colorBgElevated,
-      }}
-      styles={{
-        header: {
-          borderBottom: 0,
-          padding: 0,
-        },
-      }}
-      {...(contentProps ?? {})}
-    >
-      <Form<ForgotPasswordFormTypes>
-        layout="vertical"
-        form={form}
-        onFinish={(values) => forgotPassword(values)}
-        requiredMark={false}
-        {...formProps}
-      >
-        <Form.Item
-          name="email"
-          label={translate("pages.forgotPassword.fields.email", "Email")}
-          rules={[
-            { required: true },
-            {
-              type: "email",
-              message: translate(
-                "pages.forgotPassword.errors.validEmail",
-                "Invalid email address",
-              ),
-            },
-          ]}
+  return (
+    <Layout
+      title={TITLE_PAGE}
+      form={
+        <Form
+          disabled={isLoading}
+          onSubmit={handleSubmit(doSubmit)}
         >
-          <Input
-            type="email"
-            size="large"
-            placeholder={translate(
-              "pages.forgotPassword.fields.email",
-              "Email",
-            )}
-          />
-        </Form.Item>
+          <h1 className="text-center text-lg">{TITLE_PAGE}</h1>
+          <p>
+            Enter your email, phone, or username and we'll send you a link to reset your password.
+          </p>
 
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          {loginLink ?? (
-            <Typography.Text
-              style={{
-                marginLeft: 'auto',
-              }}
-            >
-              {translate(
-                "pages.register.buttons.haveAccount",
-                "Have an account? ",
+          <div>
+            <label htmlFor="eml">Email</label>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  status={errors.email ? "error" : ""}
+                  disabled={isLoading}
+                  id="eml"
+                  className="mt-1"
+                  inputMode="email"
+                  spellCheck={false}
+                  autoComplete="email"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  size="large"
+                  // variant="filled" // filled | borderless
+                  // prefix={<MailOutlined className="mr-1" />}
+                />
               )}
-              {" "}
-              <ActiveLink
-                to="/login"
-                style={{
-                  fontWeight: 700,
-                  color: token.colorPrimaryTextHover,
-                }}
-              >
-                {translate("pages.login.signin", "Sign in")}
-              </ActiveLink>
-            </Typography.Text>
-          )}
-        </div>
+              rules={{
+                required: true,
+                pattern: {
+                  value: emailRegExp,
+                  message: "Harap masukkan alamat email dengan benar"
+                }
+              }}
+            />
+            {errors.email && (
+              <div className="mt-1 text-red-700 text-xs">
+                {errors.email.message || translate("error.required", { name: "Email" })}
+              </div>
+            )}
+          </div>
 
-        <Form.Item
-          style={{
-            marginTop: 24,
-            marginBottom: 0,
-          }}
-        >
           <Button
             type="primary"
             size="large"
             htmlType="submit"
             loading={isLoading}
-            block
+            className="w-full mt-4"
           >
-            {translate(
-              "pages.forgotPassword.buttons.submit",
-              "Send reset instructions",
-            )}
+            {translate("pages.forgotPassword.buttons.submit")}
           </Button>
-        </Form.Item>
-      </Form>
-    </Card>
-  );
 
-  return (
-    <Layout {...(wrapperProps ?? {})}>
-      <Row
-        justify="center"
-        align="middle"
-        style={{
-          padding: '16px 0',
-          minHeight: '100dvh',
-        }}
-      >
-        <Col xs={22}>
-          {renderContent ? (
-            renderContent(CardContent, PageTitle)
-          ) : (
-            <>
-              {PageTitle}
-              {CardContent}
-            </>
-          )}
-        </Col>
-      </Row>
-    </Layout>
+          <div className="text-center mt-4">
+            {translate("pages.register.buttons.haveAccount")}
+            {' '}
+            <Link
+              to="/login"
+              className={"focus-visible_ring font-bold" + (isLoading ? " pe-none opacity-65" : "")}
+              tabIndex={isLoading ? -1 : 0}
+            >
+              {translate("pages.login.signin")}
+            </Link>
+          </div>
+        </Form>
+      }
+    />
   );
-};
-
-export default ForgotPasswordPage;
+}
