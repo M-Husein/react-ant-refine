@@ -22,7 +22,9 @@ export const ErrorComponent: React.FC<RefineErrorPageProps> = () => {
 
   useEffect(() => {
     const loader = document.getElementById('loaderApp');
-    loader?.classList.add('hidden');
+    
+    // loader?.classList.add('hidden');
+    if(loader) loader.hidden = true;
   }, []);
 
   // useEffect(() => {
