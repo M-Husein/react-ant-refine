@@ -32,6 +32,13 @@
     --q-bg-nav: #1f1f1f;
   }
 
+  .txt-main {
+    color: #212529;
+  }
+  .dark .txt-main {
+    color: #fff;
+  }
+
   // NOTE: Used fa svg icon compoonent (react-icons)
   .align--1px {
     vertical-align: -1px;

@@ -222,7 +222,7 @@ export const Sider = ({
           <Menu.Item
             key="_x"
             title=""
-            className="after-no !sticky top-0 z-1 shadow bg-main sider-search"
+            className="after-no !sticky top-0 z-1 shadow bg-white sider-search"
             style={{ 
               paddingLeft: 0, 
               marginBlockStart: 0, 
@@ -266,7 +266,7 @@ export const Sider = ({
 
         <a 
           href="#"
-          className={"truncate bg-nav rounded-lg m-2 p-1 " + (siderCollapsed ? "text-center" : "px-2")}
+          className={"truncate bg-gray-200 rounded-lg m-2 p-1 " + (siderCollapsed ? "text-center" : "px-2")}
         >
           <QuestionCircleFilled  />
           <b hidden={siderCollapsed} className="ml-2">DOCUMENTATION</b>
@@ -363,8 +363,7 @@ export const Sider = ({
       >
         <div
           style={{ width: widthSider }}
-          // bg-nav | bg-blue-100
-          className={(siderCollapsed ? "!p-0 justify-center" : "p-4") + " bg-nav flex items-center h-12 shadow relative z-2"}
+          className={(siderCollapsed ? "!p-0 justify-center" : "p-4") + " bg-blue-100 flex items-center h-12 shadow relative z-2"}
         >
           <RenderToTitle collapsed={siderCollapsed} />
         </div>

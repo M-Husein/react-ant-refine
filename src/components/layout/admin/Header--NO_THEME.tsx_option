@@ -8,13 +8,13 @@ import {
   Dropdown,
   Button,
   Modal,
-  Switch,
   // Badge,
+  // Switch,
 } from "antd";
 // import { DownOutlined } from "@ant-design/icons"; // , MoonFilled, SunFilled, SettingOutlined
 import { FaRegUser } from "react-icons/fa";
 import { useLocation, NavLink } from "react-router-dom";
-import { useApp } from "@/contexts/app/AppContext";
+// import { useApp } from "@/contexts/app/AppContext";
 import { LanguageMenu } from '@/components/LanguageMenu';
 
 const overlayStyle = {
@@ -26,7 +26,7 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
   const { data: user } = useGetIdentity<IUser>();
   const { name, username, email, avatar } = user || {};
 
-  const { theme, setTheme } = useApp();
+  // const { mode, setMode } = useApp();
   const translate = useTranslate();
   const location = useLocation();
   const { mutate: mutateLogout } = useLogout();
@@ -71,20 +71,12 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
 
   return (
     <AntdLayout.Header
-      style={{ padding: '0 14px' }}
-      // bg-blue-100 | bg-main
-      className="bg-nav !sticky h-12 flex items-center top-0 z-1051 shadow"
+      style={{ padding: '0 14px' }} // bg-main
+      className="bg-blue-100 !sticky h-12 flex items-center top-0 z-1051 shadow"
       id="navMain"
     >
       <div className="relative h-12 ml-auto flex items-center">
-        <Switch
-          checkedChildren="🌛" // <MoonFilled />
-          unCheckedChildren="🔆" // <SunFilled />
-          onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-          defaultChecked={theme === "dark"}
-        />
-        
-        <div className="relative mx-3">
+        <div className="relative mr-2">
           <LanguageMenu
             overlayStyle={{
               left: 'auto',
@@ -92,6 +84,13 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
             }}
           />
         </div>
+
+        {/* <Switch
+          checkedChildren={<MoonFilled />} // "🌛"
+          unCheckedChildren={<SunFilled />} // "🔆"
+          onChange={() => setMode(mode === "light" ? "dark" : "light")}
+          defaultChecked={mode === "dark"}
+        /> */}
 
         <Dropdown
           getPopupContainer={(triggerNode: any) => triggerNode.parentElement}

@@ -8,7 +8,7 @@ import { dataProvider } from "@/providers/dataProvider";
 import { authProvider } from "@/authProvider";
 // import { authProvider } from "@/providers/authProvider";
 // import { ColorModeContextProvider } from "@/contexts/color-mode";
-import { AppContextProvider, AppLocale } from "@/contexts/app";
+import { AppContextProvider, AppLocale } from "@/contexts/app/AppContext";
 import { useNotificationProvider } from "@/providers/notificationProvider"; // @refinedev/antd
 import { RESOURCES } from "@/routes/resources";
 import { AppRoutes } from "@/routes/AppRoutes";

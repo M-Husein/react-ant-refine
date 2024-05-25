@@ -10,7 +10,7 @@ import { ArrowUpOutlined } from '@ant-design/icons';
 import { Title } from './Title';
 import { Header } from './Header';
 import { Sider } from './Sider';
-import { useApp } from "@/contexts/app/AppContext";
+// import { useApp } from "@/contexts/app/AppContext";
 import { ThemedLayoutContextProvider } from "@/contexts/themedLayout";
 
 export const Layout: React.FC<any> = ({
@@ -22,7 +22,7 @@ export const Layout: React.FC<any> = ({
 }) => {
   // const initSiderCollapsed: any = +!!localStorage.getItem('asideMin');
 
-  const { theme } = useApp();
+  // const { mode } = useApp();
   // const { data: user } = useGetIdentity<IUser>();
   // const isSysAdmin = user?.is_sysadmin; //  && user?.name === 'system'
 
@@ -33,7 +33,7 @@ export const Layout: React.FC<any> = ({
   //     keepPreviousData: false,
   //     // enabled: ,
   //   },
-  //   resource: "auth/refresh-token",
+  //   resource: "authentication/refresh-token",
   //   meta: { method: "post" },
   //   successNotification: ({ data }: any) => {
   //     if(data?.success){
@@ -58,7 +58,7 @@ export const Layout: React.FC<any> = ({
       <AntdLayout className="min-h-fullscreen">
         <Sider
           appName={appName}
-          theme={theme}
+          // theme={mode}
           Title={({ collapsed }: any) => (
             <Title
               collapsed={collapsed}
