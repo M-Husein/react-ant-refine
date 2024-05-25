@@ -18,19 +18,18 @@
         "forgotPassword": "Tidak ingat kata sandi?",
         "noAccount": "Belum punya akun?",
         "rememberMe": "Remember me"
-      }
+      },
+      "or": "Atau masuk dengan"
     },
     "forgotPassword": {
       "title": "Lupa kata sandi Anda?",
       "fields": {
         "email": "Email"
       },
-      "errors": {
-        "validEmail": "Alamat email salah"
-      },
       "buttons": {
         "submit": "Kirim instruksi pengaturan ulang"
-      }
+      },
+      "desc": "Masukkan email, telepon, atau nama pengguna Anda dan kami akan mengirimkan Anda tautan untuk mengatur ulang kata sandi Anda."
     },
     "register": {
       "title": "Daftarkan akun Anda",
@@ -62,8 +61,7 @@
     "error": {
       "404": "Maaf, halaman yang Anda kunjungi tidak ada.",
       "backHome": "Kembali ke Home",
-      "resource404": "Apakah Anda yakin telah membuat sumber daya {{resource}}.",
-      "unspecific": "Terjadi Kesalahan"
+      "resource404": "Apakah Anda yakin telah membuat sumber daya {{resource}}."
     }
   },
   "actions": {
@@ -115,8 +113,11 @@
   },
   "error": {
     "unspecific": "Terjadi Kesalahan",
-    "create": "Gagal membuat, silahkan coba lagi",
-    "failedDelete": "Gagal menghapus, silahkan coba lagi"
+    "process": "Gagal {{type}}, silahkan coba lagi",
+    "required": "{{name}} harus diisi",
+    "invalid": "{{name}} tidak valid",
+    "minLength": "Minimal {{v}} karakter",
+    "trim": "Tidak boleh ada spasi, tab / enter di awal & akhir"
   },
   "loading": "Loading",
   "table": {

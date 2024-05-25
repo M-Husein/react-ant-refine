@@ -26,9 +26,9 @@ const Dashboard = lazy(() => import('@/pages/dashboard/Page'));
 
 // Settings
 // const RolesPermissions = lazy(() => import('@/pages/settings/roles-permissions/Page'));
-// const UserManagement = lazy(() => import('@/pages/settings/pengguna/Page'));
-// const ShowUser = lazy(() => import('@/pages/settings/pengguna/Show'));
-// const CreateUser = lazy(() => import('@/pages/settings/user-management/Create'));
+// const UserManagement = lazy(() => import('@/pages/settings/user/Page'));
+// const ShowUser = lazy(() => import('@/pages/settings/user/Show'));
+// const CreateUser = lazy(() => import('@/pages/settings/user/Create'));
 // END Settings
 // End Admin
 
@@ -59,39 +59,27 @@ export const AppRoutes = () => {
             loading={<LoaderApp />}
             fallback={<CatchAllNavigate to="/login" />}
           >
-            {/* <ThemedLayoutV2
-              Header={() => <Header sticky />}
-              Sider={(props) => <ThemedSiderV2 {...props} fixed />}
-              Title={({ collapsed }) => (
-                <ThemedTitleV2
-                  collapsed={collapsed}
-                  text="Vica"
-                  icon={<AppIcon />}
-                />
-              )}
-            >
-              <Outlet />
-            </ThemedLayoutV2> */}
-
-            {/* initialSiderCollapsed */}
             <LayoutAdmin
+              // initialSiderCollapsed
               appName={appName}
-              // Footer={() => (
-              //   <footer className="py-3 px-4 text-xs text-gray-400">
-              //     @ 2024, Made with ❤️ <strong className="text-orange-600">NAIJU</strong>
-              //   </footer>
-              // )}
             >
               <Outlet />
             </LayoutAdmin>
           </Authenticated>
         }
       >
+        <Route path="/admin">
+          <Route index element={lazyComponent(Dashboard)} />
+
+          {/** @DEV_ONLY */}
+          <Route path="devs" element={lazyComponent(Devs)} />
+        </Route>
+
         {/* <Route index element={<NavigateToResource resource="dashboard" />} /> */}
-        <Route path="/dashboard" element={lazyComponent(Dashboard)} />
+        {/* <Route path="/dashboard" element={lazyComponent(Dashboard)} /> */}
 
         {/* Settings */}
-        {/* <Route path="/settings/pengguna">
+        {/* <Route path="/settings/users">
           <Route index element={lazyComponent(UserManagement)} />
           <Route path="create" element={lazyComponent(CreateUser)} />
           <Route path=":role/:id" element={lazyComponent(ShowUser)} />
@@ -99,9 +87,6 @@ export const AppRoutes = () => {
         {/* End Settings */}
 
         {/* <Route path="/profile" element={lazyComponent(Profile)} /> */}
-
-        {/** @DEV_ONLY */}
-        <Route path="/devs" element={lazyComponent(Devs)} />
 
         {/* <Route path="*" element={<ErrorComponent />} /> */}
       </Route>

@@ -8,6 +8,7 @@ import { Controller } from 'react-hook-form'; // useForm,
 // import { FaRegUser } from "react-icons/fa";
 import { Layout } from '@/components/layout/auth/Layout';
 import { Form } from '@/components/forms/Form';
+import { socialsProvider } from '@/providers/socialsProvider';
 import { email as emailRegExp } from '@/utils/regExp';
 
 type IFormValues = {
@@ -16,13 +17,13 @@ type IFormValues = {
   // username: string;
   password: string;
   c_password: string;
-  // provider?: string; // providerName
+  providerName?: string; // providerName | provider
 }
 
 export default function Register(){
   const translate = useTranslate();
   const authProvider = useActiveAuthProvider();
-  const { mutate: register, isLoading } = useRegister<IFormValues>({ // <RegisterFormTypes>
+  const { mutate: register, isLoading } = useRegister<any>({ // <RegisterFormTypes>
     v3LegacyAuthProviderCompatible: !!authProvider?.isLegacy 
   });
 
@@ -61,7 +62,6 @@ export default function Register(){
                   className="mt-1"
                   disabled={isLoading}
                   status={errors.name ? "error" : ""}
-                  // prefix={<FaRegUser className="mr-1" />}
                   autoComplete="name"
                   autoCorrect="off"
                   autoCapitalize="off"
@@ -72,12 +72,12 @@ export default function Register(){
                 required: true,
                 minLength: {
                   value: 2,
-                  message: "Minimal 2 karakter"
+                  message: translate("error.minLength", { v: 6 })
                 },
                 pattern: {
                   value: /^\S(.*\S)?$/,
-                  message: "Tidak boleh ada spasi, tab / enter di awal & akhir"
-                }
+                  message: translate("error.trim")
+                },
               }}
             />
             {errors.name && (
@@ -101,7 +101,6 @@ export default function Register(){
                   disabled={isLoading}
                   inputMode="email"
                   status={errors.email ? "error" : ""}
-                  // prefix={<MailOutlined className="mr-1" />}
                   autoComplete="email"
                   spellCheck={false}
                 />
@@ -110,7 +109,7 @@ export default function Register(){
                 required: true, 
                 pattern: {
                   value: emailRegExp,
-                  message: "Harap masukkan alamat email dengan benar"
+                  message: translate("error.invalid", { name: "Email" })
                 }
               }}
             />
@@ -134,7 +133,6 @@ export default function Register(){
                   className="mt-1"
                   disabled={isLoading}
                   status={errors.password ? "error" : ""}
-                  // prefix={<LockOutlined className="mr-1" />}
                   autoComplete="new-password"
                   autoCapitalize="off"
                   autoCorrect="off"
@@ -145,7 +143,7 @@ export default function Register(){
                 required: true,
                 minLength: {
                   value: 6,
-                  message: "Minimal 6 karakter"
+                  message: translate("error.minLength", { v: 6 })
                 },
               }}
             />
@@ -169,7 +167,6 @@ export default function Register(){
                   className="mt-1"
                   disabled={isLoading}
                   status={errors.c_password ? "error" : ""}
-                  // prefix={<LockOutlined className="mr-1" />}
                   autoComplete="new-password"
                   autoCapitalize="off"
                   autoCorrect="off"
@@ -198,7 +195,23 @@ export default function Register(){
             {translate("pages.register.buttons.submit")}
           </Button>
 
-          <p className="text-center">
+          <div className="text-center">
+            {translate("pages.login.or")}
+
+            <div className="text-center mt-2">
+              {socialsProvider.map((item: any) =>
+                <Button
+                  key={item.name}
+                  icon={item.icon}
+                  title={item.label}
+                  className="mr-1"
+                  onClick={() => register({ providerName: item.name })}
+                />
+              )}
+            </div>
+          </div>
+
+          <p className="text-center border-t pt-4">
             {translate("pages.register.buttons.haveAccount")}
             {' '}
             <Link 

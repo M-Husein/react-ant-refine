@@ -124,9 +124,9 @@ export const Header: React.FC<RefineThemedLayoutV2HeaderProps> = () => {
                       )}
                       
                       {email && (
-                        <h4 className="text-sm mb-0 text-slate-500 font-normal truncate">
+                        <div className="text-sm text-gray-500 font-normal truncate">
                           {email}
-                        </h4>
+                        </div>
                       )}
 
                       {/* <Badge

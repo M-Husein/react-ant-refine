@@ -6,12 +6,14 @@ import { Controller } from 'react-hook-form'; // useForm,
 // import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { Layout } from '@/components/layout/auth/Layout';
 import { Form } from '@/components/forms/Form';
+import { socialsProvider } from '@/providers/socialsProvider';
+import { email as emailRegExp } from '@/utils/regExp';
 
 type IFormValues = {
   email: string;
   password: string;
   remember: boolean;
-  // provider?: string; // providerName
+  providerName?: string; // providerName | provider
 }
 
 /**
@@ -71,17 +73,19 @@ export default function Page(){
                   autoCorrect="off"
                   autoCapitalize="off"
                   size="large"
-                  // variant="filled" // filled | borderless
-                  // prefix={<MailOutlined className="mr-1" />}
                 />
               )}
               rules={{
                 required: true,
+                pattern: {
+                  value: emailRegExp,
+                  message: translate("error.invalid", { name: "Email" })
+                }
               }}
             />
             {errors.email && (
               <div className="mt-1 text-red-700 text-xs">
-                {errors.email.message || translate("pages.login.errors.validEmail")}
+                {errors.email.message || translate("error.required", { name: "Email" })}
               </div>
             )}
           </div>
@@ -103,20 +107,19 @@ export default function Page(){
                   autoCapitalize="off"
                   spellCheck={false}
                   size="large"
-                  // prefix={<LockOutlined className="mr-1" />}
                 />
               )}
               rules={{
-                required: "Masukkan password yang benar",
+                required: true,
                 minLength: {
                   value: 6,
-                  message: "Minimal 6 karakter"
+                  message: translate("error.minLength", { v: 6 })
                 },
               }}
             />
             {errors.password && (
               <div className="mt-1 text-red-700 text-xs">
-                {errors.password.message}
+                {errors.password.message || translate("error.required", { name: "Password" })}
               </div>
             )}
           </div>
@@ -155,9 +158,23 @@ export default function Page(){
             {translate("pages.login.signin")}
           </Button>
 
-          {/* <p className="text-center text-gray-500">Atau masuk dengan</p> */}
+          <div className="text-center">
+            {translate("pages.login.or")}
+
+            <div className="text-center mt-2">
+              {socialsProvider.map((item: any) =>
+                <Button
+                  key={item.name}
+                  icon={item.icon}
+                  title={item.label}
+                  className="mr-1"
+                  onClick={() => login({ providerName: item.name })}
+                />
+              )}
+            </div>
+          </div>
           
-          <p className="text-center">
+          <p className="text-center border-t pt-4">
             {translate('pages.login.buttons.noAccount')}
             {' '}
             <Link 
