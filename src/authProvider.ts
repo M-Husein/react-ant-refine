@@ -3,12 +3,21 @@ import { AuthProvider } from "@refinedev/core";
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY;
 
 export const authProvider: AuthProvider = {
-  // register: async ({ redirectPath, ...data }) => {
+  register: async ({ redirectPath, ...data }) => {
+    return {
+      success: true,
+      redirectTo: redirectPath,
+      successNotification: {
+        message: "Registration Successful",
+        description: "You have successfully registered.",
+      },
+    };
+  },
 
-  // },
-  login: async ({ username, email, password }) => {
-    if ((username || email) && password) {
-      localStorage.setItem(TOKEN_KEY, username);
+  /** @OPTIONS : providerName */
+  login: async ({ email, username, password, remember, providerName }) => {
+    if (((username || email) && password) || providerName) {
+      localStorage.setItem(TOKEN_KEY, providerName ? "Fairuz" : username || email);
       return {
         success: true,
         redirectTo: "/",
@@ -23,6 +32,7 @@ export const authProvider: AuthProvider = {
       },
     };
   },
+
   logout: async () => {
     localStorage.removeItem(TOKEN_KEY);
 
@@ -36,6 +46,7 @@ export const authProvider: AuthProvider = {
       redirectTo: "/login",
     };
   },
+
   check: async () => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
@@ -49,7 +60,9 @@ export const authProvider: AuthProvider = {
       redirectTo: "/login",
     };
   },
+
   getPermissions: async () => null,
+
   getIdentity: async () => {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
@@ -62,6 +75,7 @@ export const authProvider: AuthProvider = {
     }
     return null;
   },
+
   // forgotPassword: async ({ username }) => { // email
   //   const errorResponse = {
   //     success: false,
@@ -71,6 +85,7 @@ export const authProvider: AuthProvider = {
   //     },
   //   };
   // },
+
   onError: async (error) => {
     console.error(error);
     return { error };

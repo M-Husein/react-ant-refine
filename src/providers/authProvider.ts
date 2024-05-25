@@ -72,7 +72,8 @@ export const authProvider: AuthProvider = {
     }
   },
   
-  login: async ({ email, username, password, remember /** @DEV_OPTIONS : , providerName */ }) => {
+  /** @OPTIONS : providerName */
+  login: async ({ email, username, password, remember, providerName }) => {
     const errorResponse = {
       success: false,
       error: {
@@ -81,7 +82,7 @@ export const authProvider: AuthProvider = {
       },
     };
 
-    if((username || email) && password){
+    if(((username || email) && password) || providerName){
       try {
         /** @OPTION : For cross domain */
         // await api.get('sanctum/csrf-cookie');

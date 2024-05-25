@@ -41,7 +41,7 @@ export default function ForgotPasswordPage(){
         >
           <h1 className="text-center text-lg">{TITLE_PAGE}</h1>
           <p>
-            Enter your email, phone, or username and we'll send you a link to reset your password.
+            {translate("pages.forgotPassword.desc")}
           </p>
 
           <div>
@@ -62,15 +62,13 @@ export default function ForgotPasswordPage(){
                   autoCorrect="off"
                   autoCapitalize="off"
                   size="large"
-                  // variant="filled" // filled | borderless
-                  // prefix={<MailOutlined className="mr-1" />}
                 />
               )}
               rules={{
                 required: true,
                 pattern: {
                   value: emailRegExp,
-                  message: "Harap masukkan alamat email dengan benar"
+                  message: translate("error.invalid", { name: "Email" })
                 }
               }}
             />
@@ -86,7 +84,7 @@ export default function ForgotPasswordPage(){
             size="large"
             htmlType="submit"
             loading={isLoading}
-            className="w-full mt-4"
+            className="w-full mt-4 mb-2"
           >
             {translate("pages.forgotPassword.buttons.submit")}
           </Button>

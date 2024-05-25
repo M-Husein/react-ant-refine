@@ -18,19 +18,18 @@
         "forgotPassword": "Forgot password?",
         "noAccount": "Don't have an account?",
         "rememberMe": "Remember me"
-      }
+      },
+      "or": "Or sign in with"
     },
     "forgotPassword": {
       "title": "Forgot your password?",
       "fields": {
         "email": "Email"
       },
-      "errors": {
-        "validEmail": "Invalid email address"
-      },
       "buttons": {
         "submit": "Send reset instructions"
-      }
+      },
+      "desc": "Enter your email, phone, or username and we'll send you a link to reset your password."
     },
     "register": {
       "title": "Sign up for your account",
@@ -62,8 +61,7 @@
     "error": {
       "404": "Sorry, the page you visited does not exist.",
       "backHome": "Back to Home",
-      "resource404": "Are you sure you have created the {{resource}} resource.",
-      "unspecific": "Something went wrong"
+      "resource404": "Are you sure you have created the {{resource}} resource."
     }
   },
   "actions": {
@@ -115,8 +113,11 @@
   },
   "error": {
     "unspecific": "Something went wrong",
-    "create": "Failed to create, please try again",
-    "failedDelete": "Failed to delete, please try again"
+    "process": "Failed to {{type}}, please try again",
+    "required": "{{name}} is required",
+    "invalid": "Invalid {{name}}",
+    "minLength": "Minimum {{v}} characters",
+    "trim": "There should be no spaces, tabs / enter at the beginning & end"
   },
   "loading": "Loading",
   "table": {

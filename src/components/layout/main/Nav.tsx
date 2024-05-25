@@ -85,9 +85,6 @@ export const Nav = ({ user }:  any) => {
     }
   }
 
-  // console.log('user: ', user)
-  // console.log('data: ', data)
-
   /** @NOTE : Add loading menu */
   const menuItems = userData && user?.authenticated ? [
     ...MENUS,
@@ -105,8 +102,8 @@ export const Nav = ({ user }:  any) => {
       popupOffset: [-130, 0],
       children: [
         {
-          key: "/dashboard",
-          label: <NavLink to="/dashboard">Dashboard</NavLink>,
+          key: "/admin",
+          label: <NavLink to="/admin">Dashboard</NavLink>,
         },
         {
           key: "/setting",
@@ -147,7 +144,7 @@ export const Nav = ({ user }:  any) => {
   ];
 
   return (
-    <header className="h-14 w-full border-b border-zinc-300 !sticky top-0 z-1051 bg-white">
+    <header className="bg-main h-14 w-full border-b border-zinc-300 !sticky top-0 z-1051">
       <nav 
         ref={navRef}
         className="h-full px-2 xl_max-w-screen-xl mx-auto relative"
@@ -157,7 +154,7 @@ export const Nav = ({ user }:  any) => {
           mode="horizontal"
           triggerSubMenuAction="click"
           style={{ borderBottom: 0 }}
-          className="h-full items-center"
+          className="h-full items-center bg-main"
           items={menuItems}
           selectedKeys={[location.pathname !== '/' ? location.pathname : '']}
           getPopupContainer={() => navRef.current}

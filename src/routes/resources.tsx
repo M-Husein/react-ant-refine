@@ -8,7 +8,7 @@ import { FaCog, FaUser, FaPlus } from 'react-icons/fa'; // , FaUsers, FaUserTag,
 export const RESOURCES = [
   {
     name: "dashboard",
-    list: "/dashboard", // Render in menu
+    list: "/", // Render in menu
     meta: { label: "Dashboard", icon: <HomeFilled /> },
   },
 
