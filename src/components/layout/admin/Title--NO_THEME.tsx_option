@@ -1,6 +1,6 @@
 // import { useRouterContext, useRouterType, useLink } from "@refinedev/core";
 import { Link } from "react-router-dom";
-import { theme } from "antd"; // Typography, Space
+// import { theme } from "antd"; // Typography, Space
 // import { RefineLayoutThemedTitleProps } from "../types";
 
 // React.FC<RefineLayoutThemedTitleProps>
@@ -18,8 +18,8 @@ export const Title: React.FC<any> = ({
 
   return (
     <Link
-      to="/" // /admin/dashboard
-      className="inline-flex txt-main"
+      to="/dashboard"
+      className="inline-flex text-gray-800"
     >
       {icon}
 

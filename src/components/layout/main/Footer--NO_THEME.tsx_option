@@ -4,8 +4,7 @@ import { RiFacebookCircleFill, RiInstagramFill } from "react-icons/ri";
 
 export const Footer = () => {
   return (
-    // bg-gray-50
-    <footer className="bg-main w-full pt-8 max-md_pb-14 border-t">
+    <footer className="w-full pt-8 max-md_pb-14 border-t bg-gray-50">
       <div className="xl_max-w-screen-xl mx-auto px-4">
         <Row gutter={[24, 24]}>
           <Col lg={12} xs={24}>
@@ -17,8 +16,8 @@ export const Footer = () => {
           <Col lg={4} xs={24}>
             <h4 className="font-bold mb-4">About</h4>
             <nav className="flex flex-col items-baseline gap-y-3">
-              <NavLink to="/news" className="text-gray-500">News</NavLink>
-              <NavLink to="/careers" className="text-gray-500">Careers</NavLink>
+              <NavLink to="/news" className="text-gray-800">News</NavLink>
+              <NavLink to="/careers" className="text-gray-800">Careers</NavLink>
             </nav>
           </Col>
 
@@ -38,7 +37,7 @@ export const Footer = () => {
                 <NavLink 
                   key={item.url} 
                   to={item.url}
-                  className="text-gray-500"
+                  className="text-gray-800"
                 >
                   {item.label}
                 </NavLink>
@@ -53,7 +52,7 @@ export const Footer = () => {
                 <NavLink 
                   key={item} 
                   to={"/course/" + item}
-                  className="text-gray-500"
+                  className="text-gray-800"
                 >
                   Other {item}
                 </NavLink>
@@ -67,10 +66,10 @@ export const Footer = () => {
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pb-2">
           <span>@ 2024 {import.meta.env.VITE_APP_NAME}</span>
 
-          <NavLink to="/term-of-use" className="txt-main">
+          <NavLink to="/term-of-use" className="text-gray-800">
             Term of use
           </NavLink>
-          <NavLink to="/privacy-policy" className="txt-main">
+          <NavLink to="/privacy-policy" className="text-gray-800">
             Privacy Policy
           </NavLink>
 
